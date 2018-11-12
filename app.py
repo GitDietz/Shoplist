@@ -4,8 +4,8 @@ from config import Config
 from forms import LoginForm
 
 
-app = Flask(__name__)
-app.config.from_object(Config)
+#app = Flask(__name__)
+#app.config.from_object(Config)
 
 @app.route('/')
 @app.route('/index')
