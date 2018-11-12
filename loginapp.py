@@ -25,7 +25,7 @@ def login_alternate():
     form = LoginForm()
     if form.validate_on_submit():
         flash('login request for user {}, remember me = {}'.format(form.username.data, form.remember_me.data))
-        return redirect('/index')
+        return redirect(url_for('/index')) #use funtion name in url_for
     return render_template('login_alt.html',title = 'Sign In', form = form)
 
 
