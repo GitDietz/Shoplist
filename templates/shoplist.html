@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block main %}
+    <h1>{{user.username}} - Your shopping list</h1>
+    <p>
+        {% if slist %}
+            {% for l in slist %}
+            {{l}}<br>
+            {% endfor%}
+        {% else %}
+            <p> Add to your list
+            </p>
+        {% endif %}
+    </p>
+{% endblock %}
+
