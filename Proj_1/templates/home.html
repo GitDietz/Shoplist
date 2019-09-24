@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="jumbotron">
+    <h1 class="display-4">Hello Shopper!</h1>
+    <p class="lead">Manage your family shopping list right here</p>
+    <hr class="my-4">
+    <p>No more leaving the piece of paper behind, forgetting it in the car or having no idea what you are supposed to buy!</p>
+    <p>Right now, we're in testing but do come back here to try it out</p>
+    <p class="lead">
+    <a class="btn btn-primary btn-lg" href="{% url 'shop:shop_list' %}" role="button">Go to your list</a>
+    </p>
+</div>
+
+
+{% endblock content%}
+
+
+
+
+

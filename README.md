@@ -1,2 +1,0 @@
-# Shoplist
-Shoplist web page

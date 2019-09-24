@@ -1,0 +1,6 @@
+To do;
+
+Clone and strip
+Change the nava at the top
+Create Home page for landing
+
