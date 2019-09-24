@@ -1,0 +1,50 @@
+One approach 
+============
+use commandline first to create folder/create virtual env
+Commands to use = pip freeze to see what is installed
+pip install django 1.19.x = install the latest sub version of 19
+
+set up project: django.admin startproject my_new_project_name
+then cd to site
+activate venv:source bin/activate (i navigated to the venv folder)
+deativate with "deactivate"
+
+
+if its active navigate back to the folder where manage.py is
+
+test=python3 runserver my_new_project_name
+
+Not working! 
+pip seemed to have an older version of django, but the folder name was there in the base directory containing some other stuff.
+Deleted this and then installed it again from scratch.
+then reactivated the venv 
+installed it in the venv as well
+
+then python3 runserver my_new_project_name
+
+import reported error re PATH - looks like it coul be a verrions 2.1 object/method.
+May have to import this version?
+Uninstalled the old and installed 2.1.5
+now runserver works!
+Site comes up even though the content is a few days old!
+
+
+then in pycharm open folder where my_new_project_name is
+goto settings:
+add project interpreter by looking for Python.exe in the my_new_project_name folders
+adjust the venv to use the same version of django (i had to downgrade to 2.1.5)
+
+once that is done, go Menu/Run
+edit the config
+to script: manage.py
+script params: runserver
+
+RUNNING!
+set woking directory
+
+Can add other apps to the same space by running django.admin startproject my_new_project_name again
+===========================
+Transferring to another installation
+created new venv
+Manually added all the pacckages direct to the venv after activation
+Now going to reopen the project

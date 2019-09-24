@@ -1,0 +1,9 @@
+Desktop env
+============================
+venv in blog/venv/bin/python
+make sure the venv is selected
+close pycharm
+open again
+goto proj_1
+runserver
+

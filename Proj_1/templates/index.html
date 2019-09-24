@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>This is our template start</title>
+</head>
+<body>
+    Some funky stuff showing here!
+    <h4>{{ title }}</h4>
+    {% if object_list %}
+        <ul>
+        {% for obj in object_list%}
+            <li><!-- this one needed because at the time i still have ..posts/detail as the url pattern-->
+                <!--Post Made : <a href="/posts/detail/{{ obj.id }}/">{{ obj.title }}</a><br/>
+                 the one below now uses the url reverse
+                 a further iimprovement on : <a href='{% url "detail" id=obj.id %}'>{{ obj.title }}</a>
+                 -->
+                Post Made : <a href='{{ obj.get_absolute_url }}'>{{ obj.id }} {{ obj.title }}</a><br/>
+                On : {{ obj.create_date }}<br/>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>
+            Post Made :{{ obj.id }} {{ obj.title }}<br/>
+            Post Content : {{ obj.content }}<br/>
+            On : {{ obj.create_date }}<br/>
+            Updated: {{ obj.update_date }}<br/>
+        </p>
+    {% endif %}
+</body>
+</html>

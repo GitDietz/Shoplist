@@ -1,0 +1,16 @@
+Standard foreign key method;
+============================
+python manage.py startapp comments
+create a model for it with a foreign key to the Posts model
+register the site in admin
+thenmake migrations / migrate
+add a comment in admin
+add the property to the template  {{ instance.comment_set.all }}
+so to display the comment
+
+generic foreign keys
+====================
+use of {{ instance.comment_set.all }} will no longer work since there is a new relationship
+
+this uses a relation between the object type and the object ID like a composite key
+

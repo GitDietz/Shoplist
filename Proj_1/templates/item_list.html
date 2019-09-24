@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1>{{ title }}</h1>
+<a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
+<p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
+{% if object_list%}
+
+    {% for obj in object_list %}
+    <form method="POST" action="." >{% csrf_token %}
+        {{ form|crispy }}
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}</div>
+            <div class="col-md-4 col-xs-4">
+                {% if request.user.is_staff %}
+                <input type="submit" name="got_item|{{ obj.id }}" value="Purchased" class="btn btn-success btn-sm">
+                <input type="submit" name="cancel_item|{{ obj.id }}" value="Cancel" class="btn btn-outline-danger btn-sm">
+                {% endif %}
+                <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small></div>
+        </div>
+    </form>
+    {% endfor %}
+
+{% else %}
+    <p>No list yet!</p>
+{% endif %}
+
+    <!--
+    <div class="pagination">
+    <span class="step-links">
+        {% if object_list.has_previous %}
+            <a href="?{{ page_request_var }}={{ contacts.previous_page_number }}{% if request.Get.g %}&q={{ request.GET.q }}{% endif %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}
+        </span>
+
+        {% if object_list.has_next %}
+            <a href="?{{ page_request_var }}={{ object_list.next_page_number }}{% if request.Get.g %}&q={{ request.GET.q }}{% endif %}">next</a>
+        {% endif %}
+    </span>
+    </div>
+-->
+
+{% endblock content %}

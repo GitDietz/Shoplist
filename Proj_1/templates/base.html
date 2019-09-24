@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>{% block head_title %}Our Posting{% endblock head_title%}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href='{% static "css/base.css" %}'/>
+    <!--this link method is subject to the directory name not changing
+       <link rel="stylesheet" href="'/static/css/base.css" />, the above makes it dynamic-->
+    <!--   -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        {% block style %}
+        {% endblock style %}
+    </style>
+    {% block head_extra %}{% endblock head_extra %}
+</head>
+    <body>
+        <div id="fb-root"></div>
+        <!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.3"></script>-->
+
+        {% include "messages_display.html" %}
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-10">
+                    {% block content %} {% endblock content%}
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".content-markdown").each(function(){
+                var content = $(this).text()
+               // console.log("Original content now ---")
+               // console.log(content)
+                var markedContent = marked(content)
+                console.log("Marked up version ---------")
+                console.log(markedContent)
+                $(this).html(markedContent)
+            })
+             $(".content-markdown img").each(function(){
+                //this will add the class tag to all images to make it respond to the bootstrap setup
+                // i don't actually use it due to the card deck
+                //$(this).addClass("img-responsive")
+            })
+
+
+        })
+    </script>
+    </body>
+</html>

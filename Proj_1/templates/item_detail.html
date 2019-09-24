@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+    {{ instance.title }} | {{ block.super }}
+{% endblock head_title%}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+
+<h2>Item detail</h2>
+    <p>
+        Number {{ instance.id }} : {{ instance.description }}<br/>
+
+        Requested on: {{ instance.date_requested }}<br/>
+
+
+    </p><hr/>
+    Request by:
+    {% if instance.requested.get_full_name %}
+        {{ instance.requested.get_full_name }}
+    {% else %}
+        {{ instance.requested.name }}
+    {% endif %}
+    <hr/>
+
+
+</div>
+{% endblock content%}
+
