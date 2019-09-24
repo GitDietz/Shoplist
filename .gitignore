@@ -118,3 +118,6 @@ dmypy.json
 .idea
 .idea/*
 .idea/workspace.xml
+
+#Dev stuuf
+DevNotes.txt
