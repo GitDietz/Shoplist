@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Item, Merchant
 from pagedown.widgets import PagedownWidget
 
 class ItemForm(forms.ModelForm):
@@ -26,3 +26,9 @@ class ItemListForm(forms.ModelForm):
             'description',
             'date_purchased',
         ]
+
+
+class MerchantForm(forms.ModelForm):
+    class Meta:
+        model = Merchant
+        fields = ['name']
