@@ -61,6 +61,11 @@ def shop_create(request):
             print('ok will add to list')
             item.description = item.description.title()
             item.requested = request.user
+            # vendor_id=request.POST.get('vendor_select') #this returns the relevant ID i selected
+            vendor_id= item.to_get_from
+            # this_merchant = Merchant.objects.get(pk=vendor_id)
+            print(f'Vendor = {vendor_id}')
+            item.to_get_from = vendor_id  # this_merchant
             item.date_requested = date.today()
             item.save()
             notice = 'Added ' + item.description
@@ -83,8 +88,6 @@ def shop_list(request):
     # 2 buttons named can/done with the obj.id
     if request.user.is_authenticated():
         queryset_list = Item.objects.to_get()
-
-        # print(f'Query set is : {queryset_list}') essages.success(request, 'Successfully deleted')
         notice = ''
         if request.POST and request.user.is_staff:
             # print(f'this is the post dict {request.POST}')
@@ -182,16 +185,45 @@ class merchant_alt(UpdateView):
 
 def merchant_create(request):
     if request.method == "POST":
-        form = MerchantForm
+        form = MerchantForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('merchant_list'))
+            return HttpResponseRedirect(reverse('shop:merchant_list'))
 
     template_name = 'merchant.html'
     context = {
         'title': 'Create Merchant',
-        'form': form,
+        'form': MerchantForm(),
         'notice': '',
+    }
+    return render(request, template_name, context)
 
+def merchant_update(request,pk):
+    merchant = get_object_or_404(Merchant,pk=pk)
+    if request.method == "POST":
+        form = MerchantForm(request.POST, instance=merchant)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('shop:merchant_list'))
+
+    template_name = 'merchant.html'
+    context = {
+        'title': 'Update Merchant',
+        'form': MerchantForm(instance=merchant),
+        'notice': '',
+    }
+    return render(request, template_name, context)
+
+def merchant_delete(request,pk):
+    merchant = get_object_or_404(Merchant, pk=pk)
+    if request.method == 'POST':
+        merchant.delete()
+        return HttpResponseRedirect(reverse('shop:merchant_list'))
+
+    template_name = 'merchant_delete.html'
+    context = {
+        'title': 'Delete Merchant',
+        'object': merchant,
+        'notice': '',
     }
     return render(request, template_name, context)

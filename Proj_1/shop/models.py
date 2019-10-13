@@ -48,7 +48,7 @@ class Item(models.Model):
     description = models.CharField(max_length=100)
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
-    to_get_from = models.ForeignKey(Merchant, blank=True, null=True)
+    to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
     objects = ItemManager()
 
     class Meta:
@@ -56,7 +56,11 @@ class Item(models.Model):
 
 
     def __str__(self):
-        label = self.description.title()
+        this_merchant = self.to_get_from.name
+        if this_merchant != None:
+            label = self.description.title() + ' @ ' + this_merchant
+        else:
+            label = self.description.title()
         return str(label)
 
     # def get_absolute_url(self):

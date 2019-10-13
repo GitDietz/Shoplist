@@ -9,8 +9,8 @@
 <h2>{{title}}</h2>
     <form method='POST' action="" >
         {% csrf_token %}
-        {{ form|crispy }} <br/>
-        <input type='submit' class="btn btn-secondary" value = 'Submit'>
+        Are you sure you want to delete {{ object.name }} ?<br/>
+        <input type='submit' class="btn btn-secondary" value = 'Delete'>
 
     </form>
 
