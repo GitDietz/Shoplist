@@ -118,7 +118,33 @@ def shop_list(request):
         raise Http404
 
 @login_required
-def shop_detail(request, pk=None):
+def shop_detail(request,pk):
+    print(f'Shop|detail|user = {request.user.username}')
+    item = get_object_or_404(Item, pk=pk)
+    if request.user == item.requested or request.user.is_staff:
+        if request.method == "POST":
+            form = ItemForm(request.POST, instance=item)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('shop:shop_list'))
+
+        template_name = 'item_detail.html'
+        context = {
+            'title': 'Update Item',
+            'form': ItemForm(instance=item),
+            'notice': '',
+        }
+        return render(request, template_name, context)
+    else:
+        return redirect('shop:shop_list')
+
+def shop_detail_RA(request, pk=None):
+    '''
+    really over complicated this one
+    :param request:
+    :param pk:
+    :return:
+    '''
     print(f'Shop|detail|user = {request.user.username}')
 
     instance = get_object_or_404(Item, id=pk)
@@ -128,7 +154,25 @@ def shop_detail(request, pk=None):
         'description': instance.description,
         'form': form,
     }
-    return render(request, 'item_detail.html', context)
+    if request.method == 'POST':
+        if form.is_valid():
+            updated_desc = form.cleaned_data['description']
+            updated_from = form.cleaned_data['to_get_from']
+            instance.description = updated_desc
+            instance.to_get_from = updated_from
+            instance.save()
+            return redirect('shop:shop_list')
+        else:
+            print(f'Error on the form : {form.errors}')
+
+            return render(request, 'item_detail.html', context)
+    else:
+        if request.user == instance.requested or request.user.is_staff:
+            return render(request, 'item_detail.html', context)
+        else:
+            raise  Http404
+
+
 
 
 @login_required
@@ -175,15 +219,6 @@ def merchant_detail(request, id=None):
         'instance':instance
     }
     return render(request, 'merchant.html', context)
-
-
-class merchant_alt(UpdateView):
-    model = Merchant
-
-    def get_object(self, queryset=None):
-        obj, created = Merchant.objects.get_or_create()
-
-        return obj
 
 
 def merchant_create(request):

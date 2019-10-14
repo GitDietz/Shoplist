@@ -6,7 +6,6 @@ from .views import (
     shop_create,
     merchant_list,
     merchant_detail,
-    merchant_alt,
     merchant_create,
     merchant_update,
     merchant_delete,
