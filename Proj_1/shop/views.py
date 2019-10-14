@@ -109,7 +109,7 @@ def shop_list(request):
             notice = "You can't update the items"
 
         context = {
-            'title': 'List of all items',
+            'title': 'Your shopping list',
             'object_list':queryset_list,
             'notice':notice,
         }
