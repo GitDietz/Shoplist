@@ -1,0 +1,10 @@
+The config file contains:
+path = '/home/Getafix/shop/Proj_1'
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Proj_1.settings'
+
+Reminders:
+Check you have all the user names and passwords prior
+http://www.deekras.com/creating-forms-to-add-anor-edit.html
