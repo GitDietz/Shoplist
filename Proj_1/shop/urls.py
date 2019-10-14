@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^merchants/create$', merchant_create, name='merchant_create'),
     url(r'^merchants/(?P<pk>\d+)$', merchant_update, name='merchant_update'),
     url(r'^merchants/delete/(?P<pk>\d+)$', merchant_delete, name='merchant_delete'),
-    url(r'^(?P<id>\d+)/$', shop_detail, name='shop_edit'),
+    url(r'^(?P<pk>\d+)/$', shop_detail, name='shop_edit'),
     #url(r'^(?P<id>\d+)/$', item_detail, name='edit'),
 ]
 

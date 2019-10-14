@@ -63,8 +63,8 @@ class Item(models.Model):
             label = self.description.title()
         return str(label)
 
-    # def get_absolute_url(self):
-    #     return reverse("detail", kwargs={"id": self.id})
+    def get_absolute_url(self):
+        return reverse("detail", kwargs={"id": self.id})
 
     @property
     def to_purchase(self):

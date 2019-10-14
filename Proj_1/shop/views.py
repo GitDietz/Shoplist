@@ -118,12 +118,15 @@ def shop_list(request):
         raise Http404
 
 @login_required
-def shop_detail(request, id=None):
+def shop_detail(request, pk=None):
     print(f'Shop|detail|user = {request.user.username}')
-    instance = get_object_or_404(Item, id=id)
+
+    instance = get_object_or_404(Item, id=pk)
+    form = ItemForm(instance=instance)
     context = {
         'instance': instance,
         'description': instance.description,
+        'form': form,
     }
     return render(request, 'item_detail.html', context)
 

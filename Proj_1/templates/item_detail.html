@@ -11,7 +11,12 @@
         Number {{ instance.id }} : {{ instance.description }}<br/>
 
         Requested on: {{ instance.date_requested }}<br/>
+    <form method='POST' action="" >
+        {% csrf_token %}
+        {{ form|crispy }} <br/>
+        <input type='submit' class="btn btn-secondary" value = 'Submit'>
 
+    </form>
 
     </p><hr/>
     Request by:
