@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from accounts.views import (login_view, register_view, logout_view, home_view, temp_register_view)
+# from shop.views import merchant_list
 # complaining about the absolute import
 
 urlpatterns = [
@@ -15,7 +16,8 @@ urlpatterns = [
 
     url(r'login/',login_view, name='login'),
     url(r'logout/',logout_view, name='logout'),
-    url(r'shop/',include("shop.urls", namespace='shop')),
+    url(r'^shop/',include("shop.urls", namespace='shop')),
+    # url(r'shop/merchant',merchant_list),
     url(r'^',home_view ,name='home'),
     url(r'register/',temp_register_view, name='register'),
     #url(r'^', include("work_posts.urls")),
