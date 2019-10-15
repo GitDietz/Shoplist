@@ -11,9 +11,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'zmenzhj#q459=!^r4yt_0mmg7t7ob9tbob9hvzsips6jo0_%1-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
+DEBUG = True
+# For prod set back to False
+#ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
+# for PROD activate this again
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -132,6 +134,6 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"media_cdn")
 # user uploaded docs
 
 
-MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -56,8 +56,7 @@ coverage.xml
 *.log
 local_settings.py
 
-
-
+# Any DBs
 db.sqlite3
 *.sqlite3
 
