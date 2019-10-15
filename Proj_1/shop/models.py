@@ -29,10 +29,29 @@ class MerchantManager(models.Manager):
         return qs
 
 
+class ShopGroupManager(models.Manager):
+    def all(self):
+        qs = super(ShopGroupManager, self).all()
+        return qs
+
+
 class Merchant(models.Model):
     name = models.CharField(max_length=50)
     date_added = models.DateField(auto_now=False, auto_now_add=True)
     objects = MerchantManager()
+
+    class Meta:
+        ordering =['name']
+
+    def __str__(self):
+        return self.name.title()
+
+
+class ShopGroup(models.Model):
+    name = models.CharField(max_length=100)
+    date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
+    objects = ShopGroupManager()
 
     class Meta:
         ordering =['name']
@@ -49,6 +68,7 @@ class Item(models.Model):
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
+    # in_group = models.ForeignKey(ShopGroup, blank=True, null=True, on_delete=None)
     objects = ItemManager()
 
     class Meta:

@@ -6,8 +6,8 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 from django.views.generic import UpdateView
 
-from .forms import ItemForm, MerchantForm
-from .models import Item, Merchant
+from .forms import ItemForm, MerchantForm, ShopGroupForm
+from .models import Item, Merchant, ShopGroup
 from django.contrib.auth import (
     authenticate,
     get_user_model,
@@ -173,6 +173,35 @@ def shop_detail_RA(request, pk=None):
             raise  Http404
 
 
+@login_required
+def group_detail(request,pk=None):
+    print(f'Shop|group detail|user = {request.user.username}')
+    if request.method == "POST":
+        form = ShopGroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('shop:group_list'))
+
+    template_name = 'group.html'
+    context = {
+        'title': 'Create Group',
+        'form': ShopGroupForm(),
+        'notice': '',
+    }
+    return render(request, template_name, context)
+
+
+@login_required
+def group_list(request):
+    print(f'Group|List | user = {request.user.username}')
+    queryset_list = ShopGroup.objects.all()
+    notice = ''
+    context = {
+        'title': 'Group List',
+        'object_list':queryset_list,
+        'notice':notice,
+    }
+    return render(request, 'group_list.html', context)
 
 
 @login_required

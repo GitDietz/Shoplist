@@ -9,6 +9,8 @@ from .views import (
     merchant_create,
     merchant_update,
     merchant_delete,
+    group_detail,
+    group_list,
     )
 
 
@@ -16,6 +18,8 @@ urlpatterns = [
     url(r'^list/$', shop_list, name='shop_list'),
     url(r'^create/$', shop_create, name='shop_create'),
     #url(r'^bogger/$', shop_create, name='shop_bogger'),
+    url(r'^groups/create$', group_detail, name='group_create'),
+    url(r'^groups/$', group_list, name='group_list'),
     url(r'^merchants/$', merchant_list, name='merchant_list'),
     url(r'^merchants/create$', merchant_create, name='merchant_create'),
     url(r'^merchants/(?P<pk>\d+)$', merchant_update, name='merchant_update'),
