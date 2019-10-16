@@ -51,6 +51,7 @@ class ShopGroup(models.Model):
     name = models.CharField(max_length=100)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
     manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, null=True, related_name='member_of')
     objects = ShopGroupManager()
 
     class Meta:
