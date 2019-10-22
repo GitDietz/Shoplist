@@ -4,7 +4,7 @@ from .models import Item, Merchant, ShopGroup
 
 
 class ItemModelAdmin(admin.ModelAdmin):
-    list_display = ['description', 'requested', 'date_requested', 'purchased', 'date_purchased']
+    list_display = ['description', 'requested', 'date_requested', 'purchased', 'date_purchased', 'in_group', 'to_get_from']
 
     class Meta:
         model = Item

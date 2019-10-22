@@ -14,8 +14,8 @@
             <div class="col-md-8 col-xs-8">
                 {{ obj.name }} ({{ obj.id }})</div>
             <div class="col-md-4 col-xs-4">
-            <small><a href="{% url 'shop:merchant_update' pk=obj.pk %}"><i class="far fa-edit"></i></a>
-                <a href="{% url 'shop:merchant_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a>
+            <small><a href="{% url 'shop:group_update' pk=obj.pk %}"><i class="far fa-edit"></i></a>
+                <a href="{% url 'shop:group_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a>
                 From {{ obj.date_added | date:"d M"}} </small></div>
         </div>
     </form>

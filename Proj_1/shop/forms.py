@@ -5,7 +5,7 @@ from pagedown.widgets import PagedownWidget
 
 class ItemForm(forms.ModelForm):
     description = forms.CharField()  # widget=PagedownWidget)
-    #  vendor_select = forms.ModelChoiceField(queryset=Merchant.objects.all())
+    #  vendor_select = forms.ModelChoiceField(queryset=Merchant.objects.all()) - this type should work for other lookup operations
     #  date_requested = forms.DateField(widget=forms.SelectDateWidget)
     #  used 2 methods either the model choice field above or adding the actual model field to the list below
 
@@ -49,4 +49,4 @@ class MerchantForm(forms.ModelForm):
 class ShopGroupForm(forms.ModelForm):
     class Meta:
         model = ShopGroup
-        fields = ['name', 'manager']
+        fields = ['name', 'manager','members']

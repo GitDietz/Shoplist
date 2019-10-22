@@ -17,7 +17,7 @@ from django.contrib.auth import (
 from datetime import date
 import re
 
-
+#  #################################  General Functions #############
 def in_post(req_post, find_this):
     '''
     Determines if the post contains one of the required elements to take action on
@@ -41,7 +41,7 @@ def get_object_id(in_str):
     x = in_str.split('|')
     return int(x[1])
 
-
+#  #################################  ITEM / AKA Shop #############
 @login_required
 def shop_create(request):
     print(f'Shop|Create | user = {request.user.username}')
@@ -172,20 +172,29 @@ def shop_detail_RA(request, pk=None):
         else:
             raise  Http404
 
-
+#  ################################# GROUP #############
 @login_required
-def group_detail(request,pk=None):
-    print(f'Shop|group detail|user = {request.user.username}')
+def group_detail(request,pk=None, shopgroup_obj=None):
+    print(f'Shop|group detail|user = {request.user.username}| id = {pk}')
+    if pk:
+        shopgroup_obj = get_object_or_404(ShopGroup, pk=pk)
+
     if request.method == "POST":
-        form = ShopGroupForm(request.POST)
+        print('In Post section')
+        form = ShopGroupForm(request.POST, instance=shopgroup_obj)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('shop:group_list'))
+        else:
+            print(f'Form errors: {form.errors}')
+    else:
+        form = ShopGroupForm(instance=shopgroup_obj)
 
     template_name = 'group.html'
+    print('Outside Post section')
     context = {
-        'title': 'Create Group',
-        'form': ShopGroupForm(),
+        'title': 'Create or Update Group',
+        'form': form,
         'notice': '',
     }
     return render(request, template_name, context)
@@ -204,6 +213,22 @@ def group_list(request):
     return render(request, 'group_list.html', context)
 
 
+@login_required()
+def group_delete(request,pk):
+    group = get_object_or_404(ShopGroup, pk=pk)
+    if request.method == 'POST':
+        group.delete()
+        return HttpResponseRedirect(reverse('shop:group_list'))
+
+    template_name = 'group_delete.html'
+    context = {
+        'title': 'Delete group',
+        'object': group,
+        'notice': '',
+    }
+    return render(request, template_name, context)
+
+# ################################# MERCHANT #############
 @login_required
 def merchant_list(request):
     print(f'Merchant|List | user = {request.user.username}')

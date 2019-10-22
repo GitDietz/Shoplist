@@ -36,7 +36,7 @@ class ShopGroupManager(models.Manager):
 
 
 class Merchant(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True, blank=False)
     date_added = models.DateField(auto_now=False, auto_now_add=True)
     objects = MerchantManager()
 
@@ -48,10 +48,10 @@ class Merchant(models.Model):
 
 
 class ShopGroup(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
     manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, null=True, related_name='member_of')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, related_name='member_of')
     objects = ShopGroupManager()
 
     class Meta:
@@ -69,7 +69,7 @@ class Item(models.Model):
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
-    # in_group = models.ForeignKey(ShopGroup, blank=True, null=True, on_delete=None)
+    in_group = models.ForeignKey(ShopGroup, blank=True, null=True, on_delete=None)
     objects = ItemManager()
 
     class Meta:
