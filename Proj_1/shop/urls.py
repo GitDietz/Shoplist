@@ -11,7 +11,9 @@ from .views import (
     merchant_delete,
     group_detail,
     group_list,
-    group_delete
+    group_delete,
+    search,
+    simple_item_list,
     )
 
 
@@ -28,6 +30,8 @@ urlpatterns = [
     url(r'^merchants/(?P<pk>\d+)$', merchant_update, name='merchant_update'),
     url(r'^merchants/delete/(?P<pk>\d+)$', merchant_delete, name='merchant_delete'),
     url(r'^(?P<pk>\d+)/$', shop_detail, name='shop_edit'),
+    url(r'^users/$', search, name='user_list'),
+    url(r'^filter/$', simple_item_list, name='filter_list'),
     #url(r'^(?P<id>\d+)/$', item_detail, name='edit'),
 ]
 

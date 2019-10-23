@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+!!!!! temp item list !!!!!!
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Filter</button>
+  </form>
+  <ul>
+  {% for item in filter.qs %}
+    <li>{{ item.description }}</li>
+  {% endfor %}
+  </ul>
+
+{% endblock content %}

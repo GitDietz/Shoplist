@@ -31,6 +31,14 @@ class ItemForm(forms.ModelForm):
         return self.cleaned_data['to_get_from']
 
 
+class UsersGroupsForm(forms.ModelForm):
+    groups_for_user = forms.ModelChoiceField(queryset=ShopGroup.objects.all())
+
+    class Meta:
+        model = ShopGroup
+        fields = ['groups_for_user']
+
+
 class ItemListForm(forms.ModelForm):
     class Meta:
         model = Item

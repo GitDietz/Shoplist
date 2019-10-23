@@ -3,36 +3,51 @@
 {% block content %}
 
 <h1>{{ title }}</h1>
-<a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
+
 <p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
+<form method="POST" action="." >{% csrf_token %}
+    {{ form|crispy }}
+{% if group_list %}
+    <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            User's Lists
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for group in group_list%}
+            <a class="dropdown-item">{{group.name}}</a>
+            {% endfor %}
+          </div>
+    </div>
+{% endif %}
+<a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
 {% if object_list%}
 
-    {% for obj in object_list %}
-    <form method="POST" action="." >{% csrf_token %}
-        {{ form|crispy }}
-        <div class="row p-1 mb-2 bg-light text-dark">
-            <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}{%if obj.to_get_from != None %}
-                <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}
-                {% if obj.in_group != None %} -- {{ obj.in_group }}{% endif %}
-                </span> {% endif %}
-            </div>
-            <div class="col-md-4 col-xs-4">
-                {% if request.user.is_staff %}
+{% for obj in object_list %}
+
+
+    <div class="row p-1 mb-2 bg-light text-dark">
+        <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}{%if obj.to_get_from != None %}
+            <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}
+            {% if obj.in_group != None %} -- {{ obj.in_group }}{% endif %}
+            </span> {% endif %}
+        </div>
+        <div class="col-md-4 col-xs-4">
+            {% if request.user.is_staff %}
 <!--                    <input type="submit" name="got_item|{{ obj.id }}" value="Purchased" class="btn btn-success btn-sm">-->
 <!--                    <input type="submit" name="cancel_item|{{ obj.id }}" value="Cancel" class="btn btn-outline-danger btn-sm">-->
-                <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">
-                    <i class="far fa-check-circle"></i>
-                </button>
-                <button type="submit" name="cancel_item|{{ obj.id }}" class="btn btn-outline-danger btn-sm">
-                    <i class="far fa-trash-alt glyph"></i>
-                </button>
-                <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
-                {% endif %}
-                <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>
-            </div>
+            <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">
+                <i class="far fa-check-circle"></i>
+            </button>
+            <button type="submit" name="cancel_item|{{ obj.id }}" class="btn btn-outline-danger btn-sm">
+                <i class="far fa-trash-alt glyph"></i>
+            </button>
+            <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
+            {% endif %}
+            <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>
         </div>
-    </form>
-    {% endfor %}
+    </div>
+</form>
+{% endfor %}
 
 {% else %}
     <p>No list yet!</p>

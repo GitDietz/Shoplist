@@ -1,12 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, ListView
+from django.core.urlresolvers import reverse
 
-from .forms import ItemForm, MerchantForm, ShopGroupForm
+from .forms import ItemForm, MerchantForm, ShopGroupForm,UsersGroupsForm
 from .models import Item, Merchant, ShopGroup
 from django.contrib.auth import (
     authenticate,
@@ -14,6 +16,8 @@ from django.contrib.auth import (
     login,
     logout
     )
+from .filters import UserFilter,GroupFilter
+
 from datetime import date
 import re
 
@@ -40,6 +44,31 @@ def get_object_id(in_str):
     # print(f'get_object_id: {in_str}')
     x = in_str.split('|')
     return int(x[1])
+
+
+# class FilteredListView(ListView):
+#     filterset_class = None
+#
+#     def get_queryset(self):
+#         # Get the queryset however you usually would.  For example:
+#         queryset = super().get_queryset()
+#         # Then use the query parameters and the queryset to
+#         # instantiate a filterset and save it as an attribute
+#         # on the view instance for later.
+#         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+#         # Return the filtered queryset
+#         return self.filterset.qs.distinct()
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # Pass the filterset to the template - it provides the form.
+#         context['filterset'] = self.filterset
+#         return context
+
+
+# class ItemListView(FilteredListView):
+#     filterset_class = ItemFilterSet
+
 
 #  #################################  ITEM / AKA Shop #############
 @login_required
@@ -85,6 +114,10 @@ def shop_create(request):
 @login_required
 def shop_list(request):
     print(f'Shop|List | user = {request.user.username}')
+    # implementation of the dropdown by user groups
+    list_choices = ShopGroup.objects.filter(members = request.user)
+    group_form = UsersGroupsForm(data=ShopGroup.objects.filter(members = request.user))
+    print(f'list of groups {list_choices}')
     # 2 buttons named can/done with the obj.id
     if request.user.is_authenticated():
         queryset_list = Item.objects.to_get()
@@ -112,6 +145,8 @@ def shop_list(request):
             'title': 'Your shopping list',
             'object_list':queryset_list,
             'notice':notice,
+            'group_list':list_choices,
+            'group_form':group_form,
         }
         return render(request, 'item_list.html', context)
     else:
@@ -319,3 +354,15 @@ def merchant_delete(request,pk):
         'notice': '',
     }
     return render(request, template_name, context)
+
+# ################################# Experimental USER #############
+
+def search(request):
+    user_list = User.objects.all()
+    user_filter = UserFilter(request.GET, queryset=user_list)
+    return render(request, 'user_list.html', {'filter': user_filter})
+
+def simple_item_list(request):
+    item_list = Item.objects.to_get()
+    group_filter = GroupFilter(request.GET,queryset=item_list)
+    return render(request, 'filter_list.html', {'filter': group_filter})
