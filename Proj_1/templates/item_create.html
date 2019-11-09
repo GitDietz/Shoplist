@@ -6,7 +6,7 @@
 {% block content %}
 <div class="col-sm-6 col-sm-offset-3">
 
-<h2>{{title}}</h2>
+<h2>{{title}} for {{selected_list}}</h2>
     <a href="{% url 'shop:shop_list' %}" class="top-menu">Back to list</a><br>
     <p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
 

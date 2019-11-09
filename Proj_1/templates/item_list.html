@@ -7,7 +7,11 @@
 <p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
 <form method="POST" action="." >{% csrf_token %}
     {{ form|crispy }}
-{% if group_list %}
+    Active list = {{ active_list }}
+    {% if user_lists > 1 %}
+        <a href="{% url 'shop:group_select' %}" class="top-menu"><i class="far fa-random" title="Switch to other list"></i></a>
+    {% endif %}<br>
+    <!--{% if group_list %}
     <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             User's Lists
@@ -18,7 +22,7 @@
             {% endfor %}
           </div>
     </div>
-{% endif %}
+{% endif %}-->
 <a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
 {% if object_list%}
 
@@ -46,13 +50,13 @@
             <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>
         </div>
     </div>
-</form>
+
 {% endfor %}
 
 {% else %}
     <p>No list yet!</p>
 {% endif %}
-
+</form>
     <!--
     <div class="pagination">
     <span class="step-links">

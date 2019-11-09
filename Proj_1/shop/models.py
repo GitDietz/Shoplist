@@ -19,6 +19,10 @@ class ItemManager(models.Manager):
         qs = super(ItemManager,self).filter(purchased=None).filter(cancelled=None).order_by(Lower('description'))
         return qs
 
+    def to_get_by_group(self,group_id):
+        qs = super(ItemManager,self).filter(purchased=None).filter(cancelled=None).filter(in_group=group_id).order_by(Lower('description'))
+        return qs
+
     def purchased(self):
         qs = super(ItemManager,self).filter(to_purchase=False)
         return qs

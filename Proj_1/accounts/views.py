@@ -7,6 +7,7 @@ from django.contrib.auth import (
 
 from django.shortcuts import render,redirect
 from .forms import UserLoginForm, UserRegisterForm
+from shop.models import ShopGroup
 
 
 def login_view(request):
@@ -19,9 +20,22 @@ def login_view(request):
         user = authenticate(username=username, password=password)
         login(request, user)
         print('Loginview, Is the user ok? ' + str(request.user.is_authenticated()))
-        if next:
-            return redirect(next)
-        return redirect('/')
+        list_choices = ShopGroup.objects.filter(members=request.user)
+        if list_choices.count() > 1:
+            return redirect('shop:group_select')
+        else:
+            # also set the session with the value
+            select_item = list_choices.first().id
+            print(f'The default list {select_item}')
+            request.session['list'] = select_item
+            if next:
+                return redirect(next)
+            return redirect('/')
+
+        ## this may be useful for another workflow but not in this case, after login user must select the list, if there is more than 1
+        # if next:
+        #     return redirect(next)
+        # return redirect('/')
     context = {'form':form,
                'title':title}
     return render(request, "login_form.html", context=context)
