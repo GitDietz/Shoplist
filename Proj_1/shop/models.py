@@ -19,12 +19,12 @@ class ItemManager(models.Manager):
         qs = super(ItemManager,self).filter(purchased=None).filter(cancelled=None).order_by(Lower('description'))
         return qs
 
-    def to_get_by_group(self,group_id):
-        qs = super(ItemManager,self).filter(purchased=None).filter(cancelled=None).filter(in_group=group_id).order_by(Lower('description'))
+    def to_get_by_group(self, group_id):
+        qs = super(ItemManager, self).filter(purchased=None).filter(cancelled=None).filter(in_group=group_id).order_by(Lower('description'))
         return qs
 
     def purchased(self):
-        qs = super(ItemManager,self).filter(to_purchase=False)
+        qs = super(ItemManager, self).filter(to_purchase=False)
         return qs
 
 class MerchantManager(models.Manager):
@@ -36,6 +36,15 @@ class MerchantManager(models.Manager):
 class ShopGroupManager(models.Manager):
     def all(self):
         qs = super(ShopGroupManager, self).all()
+        return qs
+
+    def filter_by_instance(self, instance):
+        obj_id = instance.id
+        qs = super(ItemManager, self).filter(object_id=obj_id)
+        return qs
+
+    def managed_by(self, user):
+        qs = super(ShopGroupManager, self).filter(manager=user)
         return qs
 
 
@@ -56,6 +65,7 @@ class ShopGroup(models.Model):
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
     manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, related_name='member_of')
+    disabled = models.BooleanField(default=False)
     objects = ShopGroupManager()
 
     class Meta:

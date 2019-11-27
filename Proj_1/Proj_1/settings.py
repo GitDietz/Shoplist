@@ -27,15 +27,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #third party
+    'django.contrib.sites',
+    # third party
     'crispy_forms',
     'markdown_deux',
     'pagedown',
-    #local apps
-    #'comments',
+    # local apps
+    # 'comments',
     'shop',
-    #'work_posts'
+    'invitation',
+    # 'work_posts'
 ]
+
+SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -137,3 +141,9 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"media_cdn")
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+ACCOUNT_ACTIVATION_DAYS = 7
+ACCOUNT_INVITATION_DAYS = 7
+INVITATIONS_PER_USER = 7
+INVITE_MODE = True
+
