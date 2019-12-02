@@ -86,7 +86,8 @@ def invite(request):
         form = InvitationKeyForm(request.POST)
         if form.is_valid():
             print(f'email to {form.clean_email}')
-            invite_for = ShopGroup.objects.filter(name=form.clean_invite_to_group)
+            print(f'selected group {form.clean_invite_to_group}')
+            invite_for = ShopGroup.objects.filter_by_instance(form.clean_invite_to_group)
             invitation = InvitationKey.objects.create_invitation(request.user, invite_for)
             print(invitation)
             form.save()

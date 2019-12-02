@@ -40,7 +40,7 @@ class ShopGroupManager(models.Manager):
 
     def filter_by_instance(self, instance):
         obj_id = instance.id
-        qs = super(ItemManager, self).filter(object_id=obj_id)
+        qs = super(ShopGroupManager, self).filter(object_id=obj_id)
         return qs
 
     def managed_by(self, user):
