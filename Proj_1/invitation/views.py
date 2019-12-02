@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 
+import uuid
+from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
 # from registration.forms import RegistrationForm
 
@@ -12,9 +14,14 @@ from invitation.models import InvitationKey
 from invitation.forms import InvitationKeyForm
 from shop.models import ShopGroup
 
-is_key_valid = InvitationKey.objects.is_key_valid
+# is_key_valid = InvitationKey.objects.is_key_valid
 # remaining_invitations_for_user = InvitationKey.objects.remaining_invitations_for_user
 
+def create_key():
+    salt = uuid.uuid4().hex
+    key = sha_constructor(salt.encode()).hexdigest()
+    print(f'create key is {key}')
+    return key
 
 # TODO: move the authorization control to a dedicated decorator
 
@@ -79,19 +86,23 @@ def invited(request, invitation_key=None, extra_context=None):
 def invite(request):
     form = InvitationKeyForm(request.POST or None)
     template_name = 'invitation_form.html'
-    invite_selection = ShopGroup.objects.managed_by(request.user)
+    invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
     print(f'can select from {invite_selection}')
+
     if request.method == 'POST':
         print('Invite| Post section')
-        form = InvitationKeyForm(request.POST)
+        # form = InvitationKeyForm(request.POST)
         if form.is_valid():
+            InvitationKey = form.save(commit=False)
             print(f'email to {form.clean_email}')
             print(f'selected group {form.clean_invite_to_group}')
-            invite_for = ShopGroup.objects.filter_by_instance(form.clean_invite_to_group)
-            invitation = InvitationKey.objects.create_invitation(request.user, invite_for)
-            print(invitation)
-            form.save()
-            return HttpResponseRedirect(reverse('invitation_complete'))
+            # invite_for = ShopGroup.objects.filter_by_instance(form.clean_invite_to_group)
+            #invitation = InvitationKey.objects.create_invitation(request.user, InvitationKey.invite_to_group)
+            InvitationKey.key = create_key()
+            InvitationKey.from_user = request.user
+            print('goin to save invitation key')
+            InvitationKey.save()
+            return redirect('invitation_completed')
         else:
             print(f'Form errors: {form.errors}')
 
@@ -104,28 +115,37 @@ def invite(request):
     return render(request, template_name, context)
 
 
-def invite_draft(request, success_url=None,
-           form_class=InvitationKeyForm,
-           template_name='invitation/invitation_form.html',
-           extra_context=None):
-    extra_context = extra_context is not None and extra_context.copy() or {}
-    remaining_invitations = remaining_invitations_for_user(request.user)
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES)
-        if remaining_invitations > 0 and form.is_valid():
-            invitation = InvitationKey.objects.create_invitation(request.user)
-            invitation.send_to(form.cleaned_data["email"])
-            # success_url needs to be dynamically generated here; setting a
-            # a default value using reverse() will cause circular-import
-            # problems with the default URLConf for this application, which
-            # imports this file.
-            return HttpResponseRedirect(success_url or reverse('invitation_complete'))
-    else:
-        form = form_class()
-    extra_context.update({
-        'form': form,
-        'remaining_invitations': remaining_invitations,
-    })
-    return None # direct_to_template(request, template_name, extra_context)
+@login_required()
+def completed(request):
+    template_name = 'invitation_complete.html'
+    print('Invite Complete| ')
+    context = {
+        'title': 'Sent invite',
+            }
+    return render(request, template_name, context)
+
+# def invite_draft(request, success_url=None,
+#            form_class=InvitationKeyForm,
+#            template_name='invitation/invitation_form.html',
+#            extra_context=None):
+#     extra_context = extra_context is not None and extra_context.copy() or {}
+#     remaining_invitations = remaining_invitations_for_user(request.user)
+#     if request.method == 'POST':
+#         form = form_class(data=request.POST, files=request.FILES)
+#         if remaining_invitations > 0 and form.is_valid():
+#             invitation = InvitationKey.objects.create_invitation(request.user)
+#             invitation.send_to(form.cleaned_data["email"])
+#             # success_url needs to be dynamically generated here; setting a
+#             # a default value using reverse() will cause circular-import
+#             # problems with the default URLConf for this application, which
+#             # imports this file.
+#             return HttpResponseRedirect(success_url or reverse('invitation_complete'))
+#     else:
+#         form = form_class()
+#     extra_context.update({
+#         'form': form,
+#         'remaining_invitations': remaining_invitations,
+#     })
+#     return None # direct_to_template(request, template_name, extra_context)
 
 

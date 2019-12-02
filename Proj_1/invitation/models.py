@@ -2,6 +2,7 @@ import os
 import random
 import datetime
 import uuid
+
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.conf import settings
@@ -24,12 +25,10 @@ class InvitationKeyManager(models.Manager):
         # Don't bother hitting database if invitation_key doesn't match pattern.
         if not SHA1_RE.search(invitation_key):
             return None
-
         try:
             key = self.get(key=invitation_key)
         except self.model.DoesNotExist:
             return None
-
         return key
 
     def is_key_valid(self, invitation_key):
@@ -40,15 +39,15 @@ class InvitationKeyManager(models.Manager):
         invitation_key = self.get_key(invitation_key)
         return invitation_key and invitation_key.is_usable()
 
-    def create_invitation(self, user, invite_to_group):
-        """
-        Create an ``InvitationKey`` and returns it.
-        """
-        salt = uuid.uuid4().hex
-        # key = sha_constructor("%s%s%s" % (datetime.datetime.now(), salt, user.username)).hexdigest()
-        key = sha_constructor(salt.encode()).hexdigest()
-        print(f'key is {key}')
-        return self.create(from_user=user, key=key, invite_to_group=invite_to_group)
+    # def create_invitation(self, user, invite_to_group):
+    #     """
+    #     Create an ``InvitationKey`` and returns it.
+    #     """
+    #     salt = uuid.uuid4().hex
+    #     # key = sha_constructor("%s%s%s" % (datetime.datetime.now(), salt, user.username)).hexdigest()
+    #     key = sha_constructor(salt.encode()).hexdigest()
+    #     print(f'key is {key}')
+    #     return self.create(from_user=user, key=key, invite_to_group=invite_to_group)
 
     # def remaining_invitations_for_user(self, user):
     #     """
