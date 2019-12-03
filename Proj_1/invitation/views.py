@@ -84,7 +84,7 @@ def invited(request, invitation_key=None, extra_context=None):
 #
 @login_required()
 def invite(request):
-    form = InvitationKeyForm(request.POST or None)
+    form = InvitationKeyForm(request.user, request.POST or None)
     template_name = 'invitation_form.html'
     invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
     print(f'can select from {invite_selection}')
@@ -102,7 +102,7 @@ def invite(request):
             InvitationKey.from_user = request.user
             print('goin to save invitation key')
             InvitationKey.save()
-            return redirect('invitation_completed')
+            return HttpResponseRedirect(reverse('invitations:invitation_completed'))
         else:
             print(f'Form errors: {form.errors}')
 

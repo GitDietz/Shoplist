@@ -5,7 +5,7 @@ from .views import invite, invited, completed
 urlpatterns = [
     url(r'^invite/$', invite, name='invitation_invite'),
     url(r'^invited/(?P<invitation_key>\w+)/$', invited, name='invitation_invited'),
-    url(r'^complete/$', completed, name='invitation_complete'),
+    url(r'^complete/$', completed, name='invitation_completed'),
     ]
 
     #    url(r'^invite/complete/$', direct_to_template,

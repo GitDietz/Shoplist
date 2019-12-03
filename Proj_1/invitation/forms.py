@@ -1,7 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import InvitationKey
 from shop.models import ShopGroup
 # from django.contrib.auth import
+
 
 
 class InvitationKeyForm(forms.ModelForm):
@@ -20,8 +22,10 @@ class InvitationKeyForm(forms.ModelForm):
             # 'date_purchased'
         ]
 
-    # def __init__(self):
-
+    def __init__(self, user, *args, **kwargs):
+        super(InvitationKeyForm, self).__init__(*args, **kwargs)
+        managed_groups = ShopGroup.objects.managed_by(user)
+        self.fields['invite_to_group'].queryset = managed_groups
 
     def clean_email(self):
         return self.cleaned_data['email']
