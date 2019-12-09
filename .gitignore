@@ -123,5 +123,8 @@ dmypy.json
 .idea/*
 .idea/workspace.xml
 
-#Dev stuuf
+#Dev stuff
 DevNotes.txt
+
+# Ini files for settings
+settings.ini

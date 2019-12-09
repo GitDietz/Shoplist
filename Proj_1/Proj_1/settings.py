@@ -1,8 +1,15 @@
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# reading config variables
+EMAIL_KEY = config('MAIL_API_KEY') #no default or cast used
+EMAIL_FROM = config('MAIL_SENDER')
+
+
+# DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/

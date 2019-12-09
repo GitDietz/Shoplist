@@ -10,6 +10,7 @@ from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
 # from registration.forms import RegistrationForm
 
+from .email import mail_config_tester, test_send_email
 from invitation.models import InvitationKey
 from invitation.forms import InvitationKeyForm
 from shop.models import ShopGroup
@@ -85,6 +86,7 @@ def invited(request, invitation_key=None, extra_context=None):
 @login_required()
 def invite(request):
     form = InvitationKeyForm(request.user, request.POST or None)
+    the_key = test_send_email()
     template_name = 'invitation_form.html'
     invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
     print(f'can select from {invite_selection}')
@@ -123,6 +125,7 @@ def completed(request):
         'title': 'Sent invite',
             }
     return render(request, template_name, context)
+
 
 # def invite_draft(request, success_url=None,
 #            form_class=InvitationKeyForm,
