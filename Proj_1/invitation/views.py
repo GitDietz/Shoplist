@@ -10,7 +10,7 @@ from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
 # from registration.forms import RegistrationForm
 
-from .email import mail_config_tester, test_send_email
+from .email import mail_config_tester, test_send_email, email_main
 from invitation.models import InvitationKey
 from invitation.forms import InvitationKeyForm
 from shop.models import ShopGroup
@@ -86,7 +86,8 @@ def invited(request, invitation_key=None, extra_context=None):
 @login_required()
 def invite(request):
     form = InvitationKeyForm(request.user, request.POST or None)
-    the_key = test_send_email()
+    # the_key = test_send_email()
+
     template_name = 'invitation_form.html'
     invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
     print(f'can select from {invite_selection}')
@@ -104,6 +105,14 @@ def invite(request):
             InvitationKey.from_user = request.user
             print('goin to save invitation key')
             InvitationKey.save()
+            email_kwargs = {"key": InvitationKey.key,
+                            "invitee": 'Joe',
+                            "user_name": request.user.full_name,
+                            "group_name": InvitationKey.invite_to_group,
+                            "destination": form.clean_email,
+                            "subject": "Your invitation to join"}
+            if email_main(email_kwargs) != 0:
+                print('email send failed')
             return HttpResponseRedirect(reverse('invitations:invitation_completed'))
         else:
             print(f'Form errors: {form.errors}')

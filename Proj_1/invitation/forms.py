@@ -23,6 +23,7 @@ class InvitationKeyForm(forms.ModelForm):
         ]
 
     def __init__(self, user, *args, **kwargs):
+        """ this limits the selection options to only the lists managed by the user"""
         super(InvitationKeyForm, self).__init__(*args, **kwargs)
         managed_groups = ShopGroup.objects.managed_by(user)
         self.fields['invite_to_group'].queryset = managed_groups
