@@ -39,7 +39,7 @@ def test_send_email():
     return None
 
 
-def send_email(destination, subject, html):
+def send_email(html, destination, subject):
 
     try:
         sg = SendGridAPIClient(getattr(settings, "EMAIL_KEY", None))
@@ -59,8 +59,18 @@ def send_email(destination, subject, html):
         return 1
 
 
-def email_main(key, invitee, user_name, group_name, destination, subject):
-    url = url_builder(key)
-    body = body_builder(url, invitee, user_name, group_name)
-    result = send_email(destination, subject, body)
+def email_main(**kwargs):
+    '''
+    key, invitee, user_name, group_name, destination, subject
+    :param key:
+    :param invitee:
+    :param user_name:
+    :param group_name:
+    :param destination:
+    :param subject:
+    :return:
+    '''
+    url = url_builder(**kwargs.get('key'))
+    body = body_builder(url, **kwargs.get('invitee'), **kwargs.get('user_name'), **kwargs.get('group_name'))
+    result = send_email(body, **kwargs.get('destination'), **kwargs.get('subject'))
 

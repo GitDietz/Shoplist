@@ -106,12 +106,12 @@ def invite(request):
             print('goin to save invitation key')
             InvitationKey.save()
             email_kwargs = {"key": InvitationKey.key,
-                            "invitee": 'Joe',
-                            "user_name": request.user.full_name,
+                            "invitee": form.clean_invite_name,
+                            "user_name": request.user.username,
                             "group_name": InvitationKey.invite_to_group,
                             "destination": form.clean_email,
                             "subject": "Your invitation to join"}
-            if email_main(email_kwargs) != 0:
+            if email_main(**email_kwargs) != 0:
                 print('email send failed')
             return HttpResponseRedirect(reverse('invitations:invitation_completed'))
         else:
