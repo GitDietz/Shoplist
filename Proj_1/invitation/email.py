@@ -14,7 +14,7 @@ def url_builder(key):
 
 
 def body_builder(url, invitee, user_name, group_name):
-    body = f'Dear {invitee}, {user_name} invites you to become a member of the group "{group_name}"" <br>'
+    body = f'Dear {invitee}, {user_name} invites you to become a member of the group "{group_name}" <br>'
     body += 'To do this, click on the link below'
     body += '<br>' + url + '<br>We hope to see you soon!'
     body += '<br>From the team at YourList'
@@ -39,7 +39,7 @@ def test_send_email():
     return None
 
 
-def send_email(html, destination, subject):
+def send_email(body, destination, subject):
 
     try:
         sg = SendGridAPIClient(getattr(settings, "EMAIL_KEY", None))
@@ -48,29 +48,21 @@ def send_email(html, destination, subject):
             from_email=sender,
             to_emails=destination,
             subject=subject,
-            html_content=html)
+            html_content=body)
         response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+        # print(response.status_code)
+        # print(response.body)
+        # print(response.headers)
         return 0
     except Exception as e:
         print(str(e))
-        return 1
+        return body
 
 
-def email_main(**kwargs):
-    '''
-    key, invitee, user_name, group_name, destination, subject
-    :param key:
-    :param invitee:
-    :param user_name:
-    :param group_name:
-    :param destination:
-    :param subject:
-    :return:
-    '''
-    url = url_builder(**kwargs.get('key'))
-    body = body_builder(url, **kwargs.get('invitee'), **kwargs.get('user_name'), **kwargs.get('group_name'))
-    result = send_email(body, **kwargs.get('destination'), **kwargs.get('subject'))
+def email_main(**email_kwargs):
+    '''  Main code to build the components from key, invitee, user_name, group_name, destination, subject     '''
+    url = url_builder(email_kwargs.get('key'))
+    body = body_builder(url, email_kwargs.get('invitee'), email_kwargs.get('user_name'), email_kwargs.get('group_name'))
+    result = send_email(body, email_kwargs.get('destination'), email_kwargs.get('subject'))
+    return result
 

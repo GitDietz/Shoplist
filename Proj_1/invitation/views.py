@@ -93,12 +93,14 @@ def invite(request):
     print(f'can select from {invite_selection}')
 
     if request.method == 'POST':
-        print('Invite| Post section')
+        print(f'Invite| Post section |{request.user}')
         # form = InvitationKeyForm(request.POST)
         if form.is_valid():
             InvitationKey = form.save(commit=False)
-            print(f'email to {form.clean_email}')
-            print(f'selected group {form.clean_invite_to_group}')
+            data = request.POST.copy()
+            email = data.get('email')
+            print(f'form Data is {data}')
+
             # invite_for = ShopGroup.objects.filter_by_instance(form.clean_invite_to_group)
             #invitation = InvitationKey.objects.create_invitation(request.user, InvitationKey.invite_to_group)
             InvitationKey.key = create_key()
@@ -106,32 +108,40 @@ def invite(request):
             print('goin to save invitation key')
             InvitationKey.save()
             email_kwargs = {"key": InvitationKey.key,
-                            "invitee": form.clean_invite_name,
+                            "invitee": data.get('invite_name'),
                             "user_name": request.user.username,
                             "group_name": InvitationKey.invite_to_group,
-                            "destination": form.clean_email,
+                            "destination": data.get('email'),
                             "subject": "Your invitation to join"}
-            if email_main(**email_kwargs) != 0:
+            print(email_kwargs)
+            send_result = email_main(**email_kwargs)
+            if send_result != 0:
                 print('email send failed')
             return HttpResponseRedirect(reverse('invitations:invitation_completed'))
         else:
             print(f'Form errors: {form.errors}')
 
-    print('Invite| Outside Post section')
+    print('Invite | Outside Post section')
+    if not invite_selection:
+        print('no invite possible - not a manager')
+        form_option = 'refer'
+    else:
+        form_option = 'fill'
     context = {
         'title': 'Send invite to join the group',
         'form': form,
-        'selection': invite_selection,
+        'form_option': form_option,
     }
     return render(request, template_name, context)
 
 
 @login_required()
-def completed(request):
+def completed(request, send_result=None):
     template_name = 'invitation_complete.html'
-    print('Invite Complete| ')
+    print(f'Invite Complete|parameter = {send_result} ')
     context = {
         'title': 'Sent invite',
+        'invite':send_result,
             }
     return render(request, template_name, context)
 

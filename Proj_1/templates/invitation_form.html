@@ -6,8 +6,11 @@
 
 <h2>{% trans "Invite a friend" %}</h2>
 
-{% ifequal remaining_invitations 0 %}
-<p>{% trans "You currently have no invitations to send." %}</p>
+{% if form_option == 'refer' %}
+<p>{% trans "You are not the group manager and unable to send invitations." %}</p>
+Please contact the group manager to extend the invitation<br>
+<a href="{% url 'shop:shop_list' %}">Return to your list</a>
+
 {% else %}
 
 <form action="" method="POST">
@@ -17,6 +20,6 @@
 
 <input type="submit" value="{% trans "Send Invitation" %}" />
 </form>
-{% endifequal %}
+{% endif %}
 
 {% endblock %}

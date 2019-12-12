@@ -139,7 +139,7 @@ def shop_create(request):
 
 @login_required
 def shop_list(request):
-    print(f'Shop|List | user = {request.user.username}')
+    print(f'Shop| List | user = {request.user.username}')
 
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)

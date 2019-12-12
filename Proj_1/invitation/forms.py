@@ -8,7 +8,7 @@ from shop.models import ShopGroup
 
 class InvitationKeyForm(forms.ModelForm):
     email = forms.EmailField()
-    invite_name = forms.CharField(label='Your friend''s name', required=True)
+    invite_name = forms.CharField(label="Your friend's name", required=True)
     # invite_to_group = forms.ModelChoiceField(queryset=ShopGroup.objects.all()) # managed_by(request.user))
 
     class Meta:
@@ -24,6 +24,7 @@ class InvitationKeyForm(forms.ModelForm):
         super(InvitationKeyForm, self).__init__(*args, **kwargs)
         managed_groups = ShopGroup.objects.managed_by(user)
         self.fields['invite_to_group'].queryset = managed_groups
+        # self.fields['invite_to_group'].initial = 'FIRST_OPTION' no solution for this yet
 
     def clean_email(self):
         return self.cleaned_data['email']
