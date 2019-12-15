@@ -15,8 +15,10 @@ from invitation.models import InvitationKey
 from invitation.forms import InvitationKeyForm
 from shop.models import ShopGroup
 
-# is_key_valid = InvitationKey.objects.is_key_valid
+is_key_valid = InvitationKey.objects.is_key_valid
 # remaining_invitations_for_user = InvitationKey.objects.remaining_invitations_for_user
+
+send_result = ''
 
 def create_key():
     salt = uuid.uuid4().hex
@@ -45,14 +47,14 @@ class InvitationUsedCallback(object):
             self.profile_callback(user)
 
 
-def invited(request, invitation_key=None, extra_context=None):
+def invited(request, key=None, extra_context=None):
     if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
-        if invitation_key and is_key_valid(invitation_key):
+        if key and is_key_valid(key):
             template_name = 'invitation/invited.html'
         else:
             template_name = 'invitation/wrong_invitation_key.html'
         extra_context = extra_context is not None and extra_context.copy() or {}
-        extra_context.update({'invitation_key': invitation_key})
+        extra_context.update({'invitation_key': key})
         return None
             # direct_to_template(request, template_name, extra_context)
     else:
@@ -117,6 +119,7 @@ def invite(request):
             send_result = email_main(**email_kwargs)
             if send_result != 0:
                 print('email send failed')
+                print(send_result)
             return HttpResponseRedirect(reverse('invitations:invitation_completed'))
         else:
             print(f'Form errors: {form.errors}')

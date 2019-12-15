@@ -4,7 +4,8 @@ from .views import invite, invited, completed
 
 urlpatterns = [
     url(r'^invite/$', invite, name='invitation_invite'),
-    url(r'^invited/(?P<invitation_key>\w+)/$', invited, name='invitation_invited'),
+    url(r'^invited/(?P<key>[0-9a-zA-Z]{40})/$', invited, name='invitation_invited'),
+    # url(r'^invited/(?P<invitation_key>\w+)/$', invited, name='invitation_invited'),
     url(r'^complete/$', completed, name='invitation_completed'),
     ]
 

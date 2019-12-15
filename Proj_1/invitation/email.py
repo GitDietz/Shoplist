@@ -10,7 +10,7 @@ def mail_config_tester():
 
 
 def url_builder(key):
-    return 'http://127.0.0.1:8000/invite/invited/' + key
+    return 'http://127.0.0.1:8000/invite/invited/' + key +'/'
 
 
 def body_builder(url, invitee, user_name, group_name):
