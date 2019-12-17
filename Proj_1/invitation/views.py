@@ -144,7 +144,7 @@ def completed(request, send_result=None):
     print(f'Invite Complete|parameter = {send_result} ')
     context = {
         'title': 'Sent invite',
-        'invite':send_result,
+        'invite': send_result,
             }
     return render(request, template_name, context)
 

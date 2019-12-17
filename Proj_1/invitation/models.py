@@ -1,6 +1,7 @@
 import os
 import random
 import datetime
+import re
 import uuid
 
 from django.contrib.auth.models import User
@@ -23,7 +24,8 @@ class InvitationKeyManager(models.Manager):
         Return InvitationKey, or None if it doesn't (or shouldn't) exist.
         """
         # Don't bother hitting database if invitation_key doesn't match pattern.
-        if not SHA1_RE.search(invitation_key):
+        # [0-9a-f]{40}
+        if not re.search(r'[0-9a-f]{40}',invitation_key):
             return None
         try:
             key = self.get(key=invitation_key)
@@ -93,8 +95,11 @@ class InvitationKey(models.Model):
         current date, the key has expired and this method returns ``True``.
 
         """
-        expiration_date = datetime.timedelta(days=settings.ACCOUNT_INVITATION_DAYS)
-        return False
+        expiration_date = self.date_invited + datetime.timedelta(days=settings.ACCOUNT_INVITATION_DAYS)
+        if expiration_date > datetime.datetime.now():
+            return False
+        else:
+            return true
             # self.date_invited + expiration_date <= datetime.datetime.now()
 
     key_expired.boolean = True

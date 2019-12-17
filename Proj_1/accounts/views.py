@@ -5,13 +5,13 @@ from django.contrib.auth import (
     logout
     )
 
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from .forms import UserLoginForm, UserRegisterForm
 from shop.models import ShopGroup
 
 
 def login_view(request):
-    next = request.GET.get('next') # this is available when the login required redirected to user to log in
+    next = request.GET.get('next')  # this is available when the login required redirected to user to log in
     form = UserLoginForm(request.POST or None)
     title = 'Login'
     if form.is_valid():
@@ -32,12 +32,12 @@ def login_view(request):
                 return redirect(next)
             return redirect('/')
 
-        ## this may be useful for another workflow but not in this case, after login user must select the list, if there is more than 1
+        # this may be useful for another workflow but not in this case, after login user must select the list, if there is more than 1
         # if next:
         #     return redirect(next)
         # return redirect('/')
-    context = {'form':form,
-               'title':title}
+    context = {'form': form,
+               'title': title}
     return render(request, "login_form.html", context=context)
 
 def register_view(request):

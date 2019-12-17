@@ -46,13 +46,15 @@ class UserRegisterForm(forms.ModelForm):
     email = forms.EmailField(label='Email Address') # overrides the default
     email2 = forms.EmailField(label='Confirm Email')
     password = forms.CharField(widget=forms.PasswordInput)
+    group_to_join = forms.CharField(max_length=100)
     class Meta:
         model = User
         fields = [
             'username',
             'email',
             'email2',
-            'password'
+            'password',
+            'group_to_join',
         ]
     #possible to use a form level clean similar to the class above - validation will then show on the form itself and not the field
 

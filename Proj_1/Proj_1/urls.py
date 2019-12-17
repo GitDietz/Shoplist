@@ -24,6 +24,7 @@ urlpatterns = [
     # url(r'shop/merchant',merchant_list),
     url(r'^', home_view ,name='home'),
     url(r'register/', temp_register_view, name='register'),
+    url(r'register_new/', register_view, name='register_new'),
     ]
 
 if settings.DEBUG:      # ensures that this will only be done in DEV
