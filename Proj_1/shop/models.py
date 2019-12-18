@@ -47,6 +47,9 @@ class ShopGroupManager(models.Manager):
         qs = super(ShopGroupManager, self).filter(manager=user)
         return qs
 
+    def create_group(self, name, manager):
+        new_group = self.create(name=name, manager=manager)
+        return new_group
 
 class Merchant(models.Model):
     name = models.CharField(max_length=50, unique=True, blank=False)

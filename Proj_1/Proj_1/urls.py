@@ -22,9 +22,10 @@ urlpatterns = [
     url(r'logout/', logout_view, name='logout'),
     url(r'^shop/', include("shop.urls", namespace='shop')),
     # url(r'shop/merchant',merchant_list),
-    url(r'^', home_view ,name='home'),
     url(r'register/', temp_register_view, name='register'),
     url(r'register_new/', register_view, name='register_new'),
+    url(r'^', home_view ,name='home'),
+
     ]
 
 if settings.DEBUG:      # ensures that this will only be done in DEV

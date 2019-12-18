@@ -42,14 +42,21 @@ def login_view(request):
 
 def register_view(request):
     next = request.GET.get('next')
-    print('Regview,Is the user auth? ' + str(request.user.is_authenticated()) + request.user.username)
+    print('Register view,Is the user auth? ' + str(request.user.is_authenticated()) + ' ' + request.user.username)
     title = 'Register'
     form = UserRegisterForm(request.POST or None)
     if form.is_valid():
+        target_group = form.cleaned_data.get('joining')
+        # to be valid it was checked to not exist
+
         user = form.save(commit=False)
+
         password = form.cleaned_data.get('password')
         user.set_password(password)
         user.save()
+        new_group = ShopGroup.objects.create_group(target_group, user)
+        new_group.save()
+        new_group.members.add(user)
         new_user = authenticate(username=user.username, password=password)
         login(request,new_user)
         print('after valid/login. Is the user ok? ' + str(request.user.is_authenticated()) + request.user.username)

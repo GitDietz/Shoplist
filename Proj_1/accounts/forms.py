@@ -7,6 +7,9 @@ from django.contrib.auth import (
     login,
     logout,
     )
+from django.db.models import Q
+
+from shop.models import ShopGroup
 
 class UserLoginForm(forms.Form):
     username = forms.CharField()
@@ -46,7 +49,8 @@ class UserRegisterForm(forms.ModelForm):
     email = forms.EmailField(label='Email Address') # overrides the default
     email2 = forms.EmailField(label='Confirm Email')
     password = forms.CharField(widget=forms.PasswordInput)
-    group_to_join = forms.CharField(max_length=100)
+    joining = forms.CharField(label='Group to join or create', max_length=100)
+
     class Meta:
         model = User
         fields = [
@@ -54,7 +58,7 @@ class UserRegisterForm(forms.ModelForm):
             'email',
             'email2',
             'password',
-            'group_to_join',
+            'joining',
         ]
     #possible to use a form level clean similar to the class above - validation will then show on the form itself and not the field
 
@@ -71,3 +75,14 @@ class UserRegisterForm(forms.ModelForm):
             raise ValidationError('Emails already exists, please enter another one')
 
         return super(UserRegisterForm, self).clean()
+
+
+    def clean_joining(self):
+        target_group = self.cleaned_data.get('joining')
+        # now check that the group does not exists and create it, rather do this in the form
+        qs_shop_group = ShopGroup.objects.all()
+        this_found = qs_shop_group.filter(Q(name__iexact=target_group))
+        if this_found.exists():
+            raise  ValidationError('That group already exists, please enter another name')
+
+        return  super(UserRegisterForm, self).clean()

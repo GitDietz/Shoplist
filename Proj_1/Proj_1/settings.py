@@ -5,7 +5,7 @@ from decouple import config
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # reading config variables
-EMAIL_KEY = config('MAIL_API_KEY') #no default or cast used
+EMAIL_KEY = config('MAIL_API_KEY') # no default or cast used
 EMAIL_FROM = config('MAIL_SENDER')
 
 
