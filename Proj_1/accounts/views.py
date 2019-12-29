@@ -7,7 +7,7 @@ from django.contrib.auth import (
 
 from django.shortcuts import render, redirect
 from .forms import UserLoginForm, UserRegisterForm
-from Proj_1.shop.models import ShopGroup
+from shop.models import ShopGroup
 
 
 def login_view(request):

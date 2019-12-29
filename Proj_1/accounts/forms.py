@@ -74,7 +74,8 @@ class UserRegisterForm(forms.ModelForm):
         if email_qs.exists():
             raise ValidationError('Emails already exists, please enter another one')
 
-        return super(UserRegisterForm, self).clean()
+        # return super(UserRegisterForm, self).clean()
+        return email2
 
 
     def clean_joining(self):
@@ -83,6 +84,7 @@ class UserRegisterForm(forms.ModelForm):
         qs_shop_group = ShopGroup.objects.all()
         this_found = qs_shop_group.filter(Q(name__iexact=target_group))
         if this_found.exists():
-            raise  ValidationError('That group already exists, please enter another name')
+            raise ValidationError('That group already exists, please enter another name')
 
-        return  super(UserRegisterForm, self).clean()
+        # return super(UserRegisterForm, self).clean()
+        return target_group
