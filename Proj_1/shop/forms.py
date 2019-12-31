@@ -42,10 +42,7 @@ class UsersGroupsForm(forms.ModelForm):
 class ItemListForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = [
-            'description',
-            'date_purchased',
-        ]
+        fields = ['description', 'date_purchased']
 
 
 class MerchantForm(forms.ModelForm):
@@ -57,4 +54,15 @@ class MerchantForm(forms.ModelForm):
 class ShopGroupForm(forms.ModelForm):
     class Meta:
         model = ShopGroup
-        fields = ['name', 'manager','members']
+        fields = ['name', 'manager', 'members', 'leaders']
+
+    def clean_leaders(self):
+        l_leaders = self.cleaned_data['leaders']
+        print(l_leaders)
+        l_members = self.cleaned_data['members']
+        print(l_members)
+        if all(elem in l_members for elem in l_leaders):
+            return self.cleaned_data['leaders']
+        else:
+            raise forms.ValidationError('Only listed members can be leaders')
+

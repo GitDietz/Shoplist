@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 from django.core.urlresolvers import reverse
 
-from .forms import ItemForm, MerchantForm, ShopGroupForm,UsersGroupsForm
+from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
 from .models import Item, Merchant, ShopGroup
 from django.contrib.auth import (
     authenticate,
@@ -13,12 +13,13 @@ from django.contrib.auth import (
     login,
     logout
     )
-from .filters import UserFilter,GroupFilter
+from .filters import UserFilter, GroupFilter
 
 from datetime import date
 import re
 
 #  #################################  General Functions #############
+
 
 def in_post(req_post, find_this):
     '''
@@ -54,8 +55,11 @@ def get_session_list_choice(request):
         else:
             return None
     except KeyError:
-        print('In get_session_list_choice|except')
-        return None
+        print('In get_session_list_choice | except')
+        list_choices = ShopGroup.objects.filter(members=request.user)
+        select_item = list_choices.first().id
+        request.session['list'] = select_item
+        return select_item
 
 
 def get_user_list_property(request):
@@ -65,6 +69,18 @@ def get_user_list_property(request):
     user_list_options = list_choices.count()
     print(f'active list is {active_list_name}')
     return list_choices, user_list_options, list_active_no, active_list_name
+
+
+def is_user_leader(request, list_no):
+    """"to return boolean indicating that the particular user is a leader and can close/delete items"""
+    leader_in_group = ShopGroup.objects.filter(id=list_no).filter(leaders=request.user).first()
+    # leader_in_group = active_list_name.objects.filter(leaders=request.user)
+    if leader_in_group:
+        print('is_user_leader = true')
+        return True
+    else:
+        print('is_user_leader = false')
+        return False
 
 # class FilteredListView(ListView):
 #     filterset_class = None
@@ -139,7 +155,7 @@ def shop_create(request):
 
 @login_required
 def shop_list(request):
-    print(f'Shop| List | user = {request.user.username}')
+    print(f'Shop | List | user = {request.user.username}')
 
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)
@@ -150,10 +166,12 @@ def shop_list(request):
     print(f'active list is {active_list_name}')
     # print(f'list of groups {list_choices}')
     # 2 buttons named can/done with the obj.id
+    leader_status = is_user_leader(request, list_active_no)
+
     if request.user.is_authenticated():
         queryset_list = Item.objects.to_get_by_group(list_active_no)
         notice = ''
-        if request.POST and request.user.is_staff:
+        if request.POST and (request.user.is_staff or leader_status):
             print(f'this is the post dict {request.POST}')
             cancel_item = in_post(request.POST, 'cancel_item')
             purchased_item = in_post(request.POST, 'got_item')
@@ -179,6 +197,7 @@ def shop_list(request):
             'object_list': queryset_list,
             'active_list': active_list_name,
             'user_lists': user_list_options,
+            'is_leader': leader_status,
             'notice': notice,
             # 'group_list':list_choices,
             # 'group_form':group_form,
@@ -243,7 +262,7 @@ def shop_detail_ra(request, pk=None):
 #  ################################# User's GROUP #############
 @login_required
 def user_group_select(request):
-    print(f'Usr group selection |user = {request.user.username}')
+    print(f'user_group_select |user = {request.user.username}')
     notice = ''
     list_choices = ShopGroup.objects.filter(members=request.user)
     group_form = UsersGroupsForm(data=ShopGroup.objects.filter(members=request.user))
@@ -298,14 +317,17 @@ def group_detail(request, pk=None, shopgroup_obj=None):
 @login_required
 def group_list(request):
     print(f'Group|List | user = {request.user.username}')
-    queryset_list = ShopGroup.objects.all()
-    notice = ''
-    context = {
-        'title': 'Group List',
-        'object_list': queryset_list,
-        'notice': notice,
-    }
-    return render(request, 'group_list.html', context)
+    if request.user.is_staff:
+        queryset_list = ShopGroup.objects.all()
+        notice = ''
+        context = {
+            'title': 'Group List',
+            'object_list': queryset_list,
+            'notice': notice,
+        }
+        return render(request, 'group_list.html', context)
+    else:
+        return redirect('shop:shop_list')
 
 
 @login_required()

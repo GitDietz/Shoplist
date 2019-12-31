@@ -32,11 +32,11 @@
     <div class="row p-1 mb-2 bg-light text-dark">
         <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}{%if obj.to_get_from != None %}
             <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}
-            {% if obj.in_group != None %} -- {{ obj.in_group }}{% endif %}
+            {% if obj.in_group != None %}{% endif %}
             </span> {% endif %}
         </div>
         <div class="col-md-4 col-xs-4">
-            {% if request.user.is_staff %}
+            {% if request.user.is_staff or is_leader %}
 <!--                    <input type="submit" name="got_item|{{ obj.id }}" value="Purchased" class="btn btn-success btn-sm">-->
 <!--                    <input type="submit" name="cancel_item|{{ obj.id }}" value="Cancel" class="btn btn-outline-danger btn-sm">-->
             <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">

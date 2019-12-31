@@ -40,6 +40,7 @@ def login_view(request):
                'title': title}
     return render(request, "login_form.html", context=context)
 
+
 def register_view(request):
     next = request.GET.get('next')
     print('Register view,Is the user auth? ' + str(request.user.is_authenticated()) + ' ' + request.user.username)
@@ -57,8 +58,13 @@ def register_view(request):
         new_group = ShopGroup.objects.create_group(target_group, user)
         new_group.save()
         new_group.members.add(user)
+        new_group.leaders.add(user)
         new_user = authenticate(username=user.username, password=password)
-        login(request,new_user)
+        login(request, new_user)
+        # setting the group for the user
+        user_list = new_group.id
+        request.session['list'] = user_list
+
         print('after valid/login. Is the user ok? ' + str(request.user.is_authenticated()) + request.user.username)
         if next:
             return redirect(next)

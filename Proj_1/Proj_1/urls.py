@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
-from Proj_1.accounts.views import (
+from accounts.views import (
         login_view,
         register_view,
         logout_view,

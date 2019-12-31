@@ -4,6 +4,7 @@ from django.db.models.functions import Lower
 from django.conf import settings
 
 
+# ## Model Managers ## #
 
 class ItemManager(models.Manager):
     def all(self):
@@ -51,13 +52,17 @@ class ShopGroupManager(models.Manager):
         new_group = self.create(name=name, manager=manager)
         return new_group
 
+
+# ## Models ## #
+
+
 class Merchant(models.Model):
     name = models.CharField(max_length=50, unique=True, blank=False)
     date_added = models.DateField(auto_now=False, auto_now_add=True)
     objects = MerchantManager()
 
     class Meta:
-        ordering =['name']
+        ordering = ['name']
 
     def __str__(self):
         return self.name.title()
@@ -67,12 +72,13 @@ class ShopGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
     manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, related_name='member_of')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='member_of')
+    leaders = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='leader_of')
     disabled = models.BooleanField(default=False)
     objects = ShopGroupManager()
 
     class Meta:
-        ordering =['name']
+        ordering = ['name']
 
     def __str__(self):
         return self.name.title()
@@ -92,10 +98,9 @@ class Item(models.Model):
     class Meta:
         ordering = ['description']
 
-
     def __str__(self):
         this_merchant = self.to_get_from.name
-        if this_merchant != None:
+        if this_merchant:
             label = self.description.title() + ' @ ' + this_merchant
         else:
             label = self.description.title()
