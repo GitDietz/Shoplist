@@ -39,15 +39,16 @@
             {% if request.user.is_staff or is_leader %}
 <!--                    <input type="submit" name="got_item|{{ obj.id }}" value="Purchased" class="btn btn-success btn-sm">-->
 <!--                    <input type="submit" name="cancel_item|{{ obj.id }}" value="Cancel" class="btn btn-outline-danger btn-sm">-->
-            <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">
-                <i class="far fa-check-circle"></i>
-            </button>
-            <button type="submit" name="cancel_item|{{ obj.id }}" class="btn btn-outline-danger btn-sm">
-                <i class="far fa-trash-alt glyph"></i>
-            </button>
-            <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
+                <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">
+                    <i class="far fa-check-circle"></i>
+                </button>
+                <button type="submit" name="cancel_item|{{ obj.id }}" class="btn btn-outline-danger btn-sm">
+                    <i class="far fa-trash-alt glyph"></i>
+                </button>
+                <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
             {% endif %}
-            <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>
+            <!--<small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>-->
+            <span style="font-size:1.2vw;">{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</span>
         </div>
     </div>
 

@@ -139,9 +139,9 @@ STATICFILES_DIRS = [
     #'/var/www/static/', hardcoded method not used
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_cdn")
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn")
 # os.path.dirname gets the  directory name one level up
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"media_cdn")
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media_cdn")
 # user uploaded docs
 
 

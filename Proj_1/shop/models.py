@@ -28,6 +28,7 @@ class ItemManager(models.Manager):
         qs = super(ItemManager, self).filter(to_purchase=False)
         return qs
 
+
 class MerchantManager(models.Manager):
     def all(self):
         qs = super(MerchantManager, self).all()
