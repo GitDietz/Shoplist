@@ -56,19 +56,6 @@ class ShopGroupManager(models.Manager):
 
 # ## Models ## #
 
-
-class Merchant(models.Model):
-    name = models.CharField(max_length=50, unique=True, blank=False)
-    date_added = models.DateField(auto_now=False, auto_now_add=True)
-    objects = MerchantManager()
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name.title()
-
-
 class ShopGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -85,6 +72,19 @@ class ShopGroup(models.Model):
         return self.name.title()
 
 
+class Merchant(models.Model):
+    name = models.CharField(max_length=50, unique=True, blank=False)
+    date_added = models.DateField(auto_now=False, auto_now_add=True)
+    for_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=None)
+    objects = MerchantManager()
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name.title()
+
+
 class Item(models.Model):
     requested = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='req_by')
     purchased = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='buy_by')
@@ -93,7 +93,8 @@ class Item(models.Model):
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
-    in_group = models.ForeignKey(ShopGroup, blank=True, null=True, on_delete=None)
+    in_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=None)
+    # updated 1/1/20 blank=True, null=True,
     objects = ItemManager()
 
     class Meta:
