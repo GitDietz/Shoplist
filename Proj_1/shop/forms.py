@@ -21,11 +21,16 @@ class ItemForm(forms.ModelForm):
             # 'date_purchased'
         ]
 
+    def __init__(self, *args, **kwargs):
+        """ this limits the selection options to only the active list for the user"""
+        list = kwargs.pop('list')
+        active_list = Merchant.objects.filter(for_group_id=list)
+
+        super(ItemForm, self).__init__(*args, **kwargs)
+        self.fields['to_get_from'].queryset = active_list
+
     def clean_description(self):
         return self.cleaned_data['description'].title()
-
-    # def clean_vendor_select(self):
-    #     return self.cleaned_data['vendor_select']
 
     def clean_to_get_from(self):
         return self.cleaned_data['to_get_from']
@@ -50,16 +55,18 @@ class MerchantForm(forms.ModelForm):
         model = Merchant
         fields = ['name', 'for_group']
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """ this limits the selection options to only the active list for the user"""
         list = kwargs.pop('list')
         initial_value = kwargs.pop('default')
         active_list = ShopGroup.objects.filter(id=list)
 
         super(MerchantForm, self).__init__(*args, **kwargs)
-    #
-    #     self.fields['for_group'].queryset = active_list
-    #     # self.fields['for_group'].initial = initial_value
+
+        self.fields['for_group'].queryset = active_list
+        self.fields['for_group'].initial = initial_value
+        # self.fields['for_group'].disabled = True
+        # self.fields['for_group'].required = False
     #     # self.fields['for_group'] = forms.ChoiceField(
     #     #     required=True,
     #     #     choices=active_list,
@@ -70,10 +77,9 @@ class MerchantForm(forms.ModelForm):
     #     return self.cleaned_data['name'].title()
     #
     # def clean_for_group(self):
-    #     if self.cleaned_data['for_group']:
-    #         return self.cleaned_data['for_group']
-    #     else:
-    #         raise forms.ValidationError("Group is required")
+    #     if self.cleaned_data['for_group'] == "":
+    #         self.cleaned_data['for_group'] = self.fields['for_group'].initial
+    #     return self.cleaned_data['for_group']
 
 
 class MerchantForm_RA(forms.ModelForm):

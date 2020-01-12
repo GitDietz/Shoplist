@@ -14,7 +14,7 @@ admin.site.register(Item, ItemModelAdmin)
 
 
 class MerchantModelAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date_added']
+    list_display = ['name', 'for_group', 'date_added']
 
     class Meta:
         model = Merchant

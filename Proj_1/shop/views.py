@@ -112,8 +112,8 @@ def is_user_leader(request, list_no):
 @login_required
 def shop_create(request):
     print(f'Shop|Create | user = {request.user.username}')
-    form = ItemForm(request.POST or None)
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
+    form = ItemForm(request.POST or None, list=list_active_no)
     title = 'Add purchase items'
     notice = ''
     if form.is_valid():
@@ -353,7 +353,8 @@ def group_delete(request, pk):
 @login_required
 def merchant_list(request):
     print(f'Merchant|List | user = {request.user.username}')
-    queryset_list = Merchant.objects.all()
+    list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
+    queryset_list = Merchant.objects.filter(for_group_id=list_active_no)
     notice = ''
     context = {
         'title': 'Merchant List',
@@ -406,7 +407,7 @@ def merchant_create(request):
     # list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     #
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
-    form = MerchantForm(request.POST, list=list_active_no, default=active_list_name)
+    form = MerchantForm(request.POST or None, list=list_active_no, default=active_list_name)
     if request.method == "POST":
 
         if form.is_valid():

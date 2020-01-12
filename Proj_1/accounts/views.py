@@ -19,7 +19,9 @@ def login_view(request):
         password = form.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
         login(request, user)
-        print('Loginview, Is the user ok? ' + str(request.user.is_authenticated()))
+        print('Login_view, Is the user ok? ' + str(request.user.is_authenticated()))
+        if request.user.username == 'SuperAdmin':
+            return redirect('/')
         list_choices = ShopGroup.objects.filter(members=request.user)
         if list_choices.count() > 1:
             return redirect('shop:group_select')
