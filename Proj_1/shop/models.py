@@ -1,3 +1,5 @@
+import os
+
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.functions import Lower
@@ -73,13 +75,15 @@ class ShopGroup(models.Model):
 
 
 class Merchant(models.Model):
-    name = models.CharField(max_length=50, unique=True, blank=False)
+    name = models.CharField(max_length=50, unique=False, blank=False)
     date_added = models.DateField(auto_now=False, auto_now_add=True)
     for_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=None)
     objects = MerchantManager()
 
     class Meta:
         ordering = ['name']
+        unique_together = ('name', 'for_group')
+        # indexes = [models.Index(fields=['name', 'for_group'])]
 
     def __str__(self):
         return self.name.title()

@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.db import DatabaseError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
-from django.core.urlresolvers import reverse
+
 
 from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
 from .models import Item, Merchant, ShopGroup
@@ -264,7 +266,9 @@ def shop_detail_ra(request, pk=None):
 def user_group_select(request):
     print(f'user_group_select |user = {request.user.username}')
     notice = ''
+    # get the lists the user is member of
     list_choices = ShopGroup.objects.filter(members=request.user)
+    # pass the members groups to form
     group_form = UsersGroupsForm(data=ShopGroup.objects.filter(members=request.user))
     print(f'list of groups {list_choices}')
     template_name = 'group_select.html'
@@ -361,9 +365,11 @@ def merchant_list(request):
 
 @login_required
 def merchant_detail(request, id=None):
-    print(f'Merchant|Create or Edit | user = {request.user.username}')
+    # 10/1/20 mod to use list as part of merchant model
+    print(f'Merchant | Create or Edit | user = {request.user.username}')
     instance = get_object_or_404(Merchant, id=id)
     form = MerchantForm(request.POST or None)
+    list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     title = 'Add or Edit Merchant'
     notice = ''
     if request.method == 'POST' and form.is_valid():
@@ -378,6 +384,8 @@ def merchant_detail(request, id=None):
         else:
             print(f'ok will add {Merchant.name} to list')
             Merchant.name = Merchant.title()
+            print('Adding list reference')
+            Merchant.for_group = active_list_name
             Merchant.save()
             notice = 'Added ' + Merchant.name
 
@@ -394,16 +402,31 @@ def merchant_detail(request, id=None):
 
 @login_required
 def merchant_create(request):
+    # 10/1/20 now need to have the group instance available to add
+    # list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
+    #
+    list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
+    form = MerchantForm(request.POST, list=list_active_no, default=active_list_name)
     if request.method == "POST":
-        form = MerchantForm(request.POST)
+
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('shop:merchant_list'))
+            try:
+                item = form.save(commit=False)
+                # print(f'ok will add {Merchant.name} to list')
+                item.name = form.cleaned_data['name'].title()
+                print('Adding list reference')
+                # item.for_group = active_list_name
+                item.save()
+                return HttpResponseRedirect(reverse('shop:merchant_list'))
+            except DatabaseError:
+                raise ValidationError('That Merchant already exists in this group')
+        else:
+            print(form.errors)
 
     template_name = 'merchant.html'
     context = {
         'title': 'Create Merchant',
-        'form': MerchantForm(),
+        'form': form,
         'notice': '',
     }
     return render(request, template_name, context)
