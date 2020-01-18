@@ -2,11 +2,11 @@ from django.contrib.auth import (
     authenticate,
     get_user_model,
     login,
-    logout
-    )
+    logout)
 
 from django.shortcuts import render, redirect
 from .forms import UserLoginForm, UserRegisterForm
+from invitation.models import InvitationKey
 from shop.models import ShopGroup
 
 
@@ -20,27 +20,44 @@ def login_view(request):
         user = authenticate(username=username, password=password)
         login(request, user)
         print('Login_view, Is the user ok? ' + str(request.user.is_authenticated()))
-        if request.user.username == 'SuperAdmin':
-            return redirect('/')
-        list_choices = ShopGroup.objects.filter(members=request.user)
-        if list_choices.count() > 1:
-            return redirect('shop:group_select')
+        has_invites = InvitationKey.objects.key_for_email(user.email)
+        if has_invites:
+            return redirect('invitations:invite_select_view')
         else:
-            # also set the session with the value
-            select_item = list_choices.first().id
-            print(f'The default list {select_item}')
-            request.session['list'] = select_item
-            if next:
-                return redirect(next)
-            return redirect('/')
+            return redirect('set_group')
+            # list_choices = ShopGroup.objects.filter(members=request.user)
+            # if list_choices is None:
+            #     # if request.user.username == 'SuperAdmin':
+            #     return redirect('/')
+            # elif list_choices.count() > 1:
+            #     return redirect('shop:group_select')
+            # else:
+            #     # also set the session with the value
+            #     select_item = list_choices.first().id
+            #     print(f'The default list {select_item}')
+            #     request.session['list'] = select_item
+            #     if next:
+            #         return redirect(next)
+            #     return redirect('/')
 
-        # this may be useful for another workflow but not in this case, after login user must select the list, if there is more than 1
-        # if next:
-        #     return redirect(next)
-        # return redirect('/')
     context = {'form': form,
                'title': title}
     return render(request, "login_form.html", context=context)
+
+
+def set_group(request):
+    list_choices = ShopGroup.objects.filter(members=request.user)
+    if list_choices is None:
+        # if request.user.username == 'SuperAdmin':
+        return redirect('/')
+    elif list_choices.count() > 1:
+        return redirect('shop:group_select')
+    else:
+        # also set the session with the value
+        select_item = list_choices.first().id
+        print(f'The default list {select_item}')
+        request.session['list'] = select_item
+        return redirect('/')
 
 
 def register_view(request):

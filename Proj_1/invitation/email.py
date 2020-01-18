@@ -13,6 +13,10 @@ def url_builder(key):
     return 'http://127.0.0.1:8000/invite/invited/' + key +'/'
 
 
+def url_builder_existing_user():
+    return 'http://127.0.0.1:8000/login/'
+
+
 def body_builder(url, invitee, user_name, group_name):
     body = f'Dear {invitee}, {user_name} invites you to become a member of the group "{group_name}" <br>'
     body += 'To do this, click on the link below'
@@ -59,9 +63,12 @@ def send_email(body, destination, subject):
         return body
 
 
-def email_main(**email_kwargs):
+def email_main(existing_user, **email_kwargs):
     '''  Main code to build the components from key, invitee, user_name, group_name, destination, subject     '''
-    url = url_builder(email_kwargs.get('key'))
+    if not existing_user:
+        url = url_builder(email_kwargs.get('key'))
+    else:
+        url = url_builder_existing_user()
     body = body_builder(url, email_kwargs.get('invitee'), email_kwargs.get('user_name'), email_kwargs.get('group_name'))
     result = send_email(body, email_kwargs.get('destination'), email_kwargs.get('subject'))
     return result

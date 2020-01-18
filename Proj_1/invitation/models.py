@@ -25,7 +25,7 @@ class InvitationKeyManager(models.Manager):
         """
         # Don't bother hitting database if invitation_key doesn't match pattern.
         # [0-9a-f]{40}
-        if not re.search(r'[0-9a-f]{40}',invitation_key):
+        if not re.search(r'[0-9a-f]{40}', invitation_key):
             return None
         try:
             key = self.get(key=invitation_key)
@@ -40,6 +40,13 @@ class InvitationKeyManager(models.Manager):
         """
         invitation_key = self.get_key(invitation_key)
         return invitation_key and invitation_key.is_usable()
+
+    def key_for_email(self,email):
+        keys = InvitationKey.objects.filter(invited_email=email).filter(invite_used=False)
+        if keys.exists():
+            return True
+        else:
+            return False
 
     # def create_invitation(self, user, invite_to_group):
     #     """
@@ -68,10 +75,12 @@ class InvitationKeyManager(models.Manager):
 
 class InvitationKey(models.Model):
     key = models.CharField(_('invitation key'), max_length=40)
-    date_invited = models.DateTimeField(_('date invited'), default=datetime.datetime.now)
+    date_invited = models.DateField(_('date invited'), default=datetime.date.today)
     from_user = models.ForeignKey(User, related_name='invitations_sent')
     registrant = models.ForeignKey(User, null=True, blank=True, related_name='invitations_used')
     invite_to_group = models.ForeignKey(ShopGroup, on_delete=models.CASCADE)
+    invited_email = models.EmailField(null=False, blank=False)
+    invite_used = models.BooleanField(null=False, default=False)
     objects = InvitationKeyManager()
 
     def __unicode__(self):
@@ -96,10 +105,10 @@ class InvitationKey(models.Model):
 
         """
         expiration_date = self.date_invited + datetime.timedelta(days=settings.ACCOUNT_INVITATION_DAYS)
-        if expiration_date > datetime.datetime.now():
+        if expiration_date > datetime.date.today():
             return False
         else:
-            return true
+            return True
             # self.date_invited + expiration_date <= datetime.datetime.now()
 
     key_expired.boolean = True
@@ -109,43 +118,9 @@ class InvitationKey(models.Model):
         Note that this key has been used to register a new user.
         """
         self.registrant = registrant
+        self.invite_used = True
         self.save()
 
-    def send_to(self, email):
-        """
-        Send an invitation email to ``email``.
-        """
-        current_site = Site.objects.get_current()
-
-        subject = render_to_string('invitation/invitation_email_subject.txt',
-                                   {'site': current_site,
-                                    'invitation_key': self})
-        # Email subject *must not* contain newlines
-        subject = ''.join(subject.splitlines())
-
-        message = render_to_string('invitation/invitation_email.txt',
-                                   {'invitation_key': self,
-                                    'expiration_days': settings.ACCOUNT_INVITATION_DAYS,
-                                    'site': current_site})
-
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
-
-
-# class InvitationUser(models.Model):
-#     inviter = models.OneToOneField(User, on_delete=models.CASCADE)
-#     invitations_remaining = models.IntegerField()
-#
-#     def __unicode__(self):
-#         return u"InvitationUser for %s" % self.inviter.username
-#
-#
-# def user_post_save(sender, instance, created, **kwargs):
-#     """Create InvitationUser for user when User is created."""
-#     if created:
-#         invitation_user = InvitationUser()
-#         invitation_user.inviter = instance
-#         invitation_user.invitations_remaining = settings.INVITATIONS_PER_USER
-#         invitation_user.save()
 
 
 # models.signals.post_save.connect(user_post_save, sender=User)

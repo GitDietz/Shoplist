@@ -5,7 +5,6 @@ from shop.models import ShopGroup
 # from django.contrib.auth import
 
 
-
 class InvitationKeyForm(forms.ModelForm):
     email = forms.EmailField()
     invite_name = forms.CharField(label="Your friend's name", required=True)
@@ -35,3 +34,17 @@ class InvitationKeyForm(forms.ModelForm):
     def clean_invite_name(self):
         return self.cleaned_data['invite_name']
 
+
+class InvitationSelectForm(forms.ModelForm):
+    # invite_choices = [('1', 'Accept'), ('2', 'Decline')]
+    # choice = forms.ChoiceField(widget=forms.RadioSelect, choices=invite_choices)
+
+    class Meta:
+        model = InvitationKey
+        fields = ['invite_to_group']
+
+    # def __init__(self, user, *args, **kwargs):
+    #     """ this limits the selection options to only the lists managed by the user"""
+    #     super(InvitationSelectForm, self).__init__(*args, **kwargs)
+    #     open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=user.email)
+    #     self.fields['invite_to_group'].queryset = open_invites

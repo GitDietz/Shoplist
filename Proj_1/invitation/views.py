@@ -2,9 +2,11 @@ from django.conf import settings
 # from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 
+import datetime
 import uuid
 from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
@@ -12,8 +14,9 @@ from hashlib import sha1 as sha_constructor
 
 from .email import mail_config_tester, test_send_email, email_main
 from invitation.models import InvitationKey
-from invitation.forms import InvitationKeyForm
+from .forms import InvitationKeyForm, InvitationSelectForm
 from shop.models import ShopGroup
+from Proj_1.utils import in_post
 
 is_key_valid = InvitationKey.objects.is_key_valid
 # remaining_invitations_for_user = InvitationKey.objects.remaining_invitations_for_user
@@ -23,8 +26,14 @@ send_result = ''
 def create_key():
     salt = uuid.uuid4().hex
     key = sha_constructor(salt.encode()).hexdigest()
-    print(f'create key is {key}')
+    print(f'created key is {key}')
     return key
+
+def is_existing_user(email):
+    if User.objects.filter(email=email).exists():
+        return True
+    else:
+        return False
 
 # TODO: move the authorization control to a dedicated decorator
 
@@ -51,6 +60,9 @@ def invited(request, key=None, extra_context=None):
     if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
         if key and is_key_valid(key):
             template_name = 'invitation/invited.html'
+            # add here switch for when the user is already registered - use a different template
+            #
+
         else:
             template_name = 'invitation/wrong_invitation_key.html'
         extra_context = extra_context is not None and extra_context.copy() or {}
@@ -85,10 +97,10 @@ def invited(request, key=None, extra_context=None):
 #         return registration_register(request, success_url, form_class,
 #                                      profile_callback, template_name, extra_context)
 #
+
 @login_required()
 def invite(request):
     form = InvitationKeyForm(request.user, request.POST or None)
-    # the_key = test_send_email()
 
     template_name = 'invitation_form.html'
     invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
@@ -103,11 +115,10 @@ def invite(request):
             email = data.get('email')
             print(f'form Data is {data}')
 
-            # invite_for = ShopGroup.objects.filter_by_instance(form.clean_invite_to_group)
-            #invitation = InvitationKey.objects.create_invitation(request.user, InvitationKey.invite_to_group)
             InvitationKey.key = create_key()
             InvitationKey.from_user = request.user
-            print('goin to save invitation key')
+            InvitationKey.invited_email = email
+            print('going to save invitation key')
             InvitationKey.save()
             email_kwargs = {"key": InvitationKey.key,
                             "invitee": data.get('invite_name'),
@@ -116,7 +127,7 @@ def invite(request):
                             "destination": data.get('email'),
                             "subject": "Your invitation to join"}
             print(email_kwargs)
-            send_result = email_main(**email_kwargs)
+            send_result = email_main(is_existing_user(email), **email_kwargs)
             if send_result != 0:
                 print('email send failed')
                 print(send_result)
@@ -144,9 +155,46 @@ def completed(request, send_result=None):
     print(f'Invite Complete|parameter = {send_result} ')
     context = {
         'title': 'Sent invite',
-        'invite': send_result,
-            }
+        'invite': send_result}
+
     return render(request, template_name, context)
+
+@login_required()
+def invite_select_view(request):
+    title = 'Select to join group/s'
+    open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=request.user.email)
+
+    if open_invites.count() == 0:
+        # redirect to the other form
+        return redirect('set_group')
+    else:
+        if request.POST:
+            accept_item = in_post(request.POST, 'accept_item')
+            reject_item = in_post(request.POST, 'reject_item')
+            if accept_item !=0 or reject_item !=0:
+                item_to_update = max(accept_item, reject_item)
+                instance = get_object_or_404(InvitationKey, id=item_to_update)
+                if accept_item != 0:
+                    print(f'to accept item {accept_item}')
+                    group_instance = get_object_or_404(ShopGroup, name=instance.invite_to_group.name)
+                    group_instance.members.add(request.user)
+                    instance.invite_used = True
+                elif reject_item != 0:
+                    print(f'to mark as reject item {reject_item}')
+                    instance.invite_used = True
+
+                instance.save()
+
+    open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=request.user.email)
+
+    if open_invites.count() == 0:
+        # redirect to the other form
+        return redirect('set_group')
+
+    context = {'objects': open_invites,
+               'title': title}
+
+    return render(request, "invite_select_list.html", context=context)
 
 
 # def invite_draft(request, success_url=None,

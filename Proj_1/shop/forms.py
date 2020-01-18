@@ -66,6 +66,8 @@ class MerchantForm(forms.ModelForm):
         self.fields['for_group'].queryset = active_list
         self.fields['for_group'].initial = initial_value
         # self.fields['for_group'].disabled = True
+        # this method works but the side effect is no value being returned for the field
+        # attempts to make the clean function replace the value
         # self.fields['for_group'].required = False
     #     # self.fields['for_group'] = forms.ChoiceField(
     #     #     required=True,

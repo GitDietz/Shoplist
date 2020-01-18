@@ -6,46 +6,12 @@ from django.db import DatabaseError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 
-
+from .filters import UserFilter, GroupFilter
 from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
 from .models import Item, Merchant, ShopGroup
-from django.contrib.auth import (
-    authenticate,
-    get_user_model,
-    login,
-    logout
-    )
-from .filters import UserFilter, GroupFilter
 
+from Proj_1.utils import *
 from datetime import date
-import re
-
-#  #################################  General Functions #############
-
-
-def in_post(req_post, find_this):
-    '''
-    Determines if the post contains one of the required elements to take action on
-    :param req_post: request
-    :param find_this: string part to look for
-    :return: 0 if nothing found or int for the id contained in the post key
-    '''
-    # print('in_post: running through the post') # the keys
-    # print(f'searching for : {find_this}')
-    for i in req_post:
-        # print(f'dict item is: {i}')
-        x = re.search(find_this, i)
-        if x is not None:
-            y = str(i)
-            # print(f'this was found {y}')
-            return get_object_id(y)
-    return 0
-
-
-def get_object_id(in_str):
-    # print(f'get_object_id: {in_str}')
-    x = in_str.split('|')
-    return int(x[1])
 
 
 def get_session_list_choice(request):

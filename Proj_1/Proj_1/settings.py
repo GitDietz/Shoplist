@@ -20,7 +20,7 @@ SECRET_KEY = 'zmenzhj#q459=!^r4yt_0mmg7t7ob9tbob9hvzsips6jo0_%1-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # For prod set back to False
-#ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
+# ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
 # for PROD activate this again
 ALLOWED_HOSTS = []
 
