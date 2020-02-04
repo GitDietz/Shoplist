@@ -1,6 +1,7 @@
 from django.conf import settings
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import logging
 
 
 def mail_config_tester():
@@ -59,7 +60,7 @@ def send_email(body, destination, subject):
         # print(response.headers)
         return 0
     except Exception as e:
-        print(str(e))
+        logging.getLogger("info_logger").info("str(e)")
         return body
 
 
@@ -70,6 +71,11 @@ def email_main(existing_user, **email_kwargs):
     else:
         url = url_builder_existing_user()
     body = body_builder(url, email_kwargs.get('invitee'), email_kwargs.get('user_name'), email_kwargs.get('group_name'))
-    result = send_email(body, email_kwargs.get('destination'), email_kwargs.get('subject'))
+    force_fail = True
+    if force_fail:
+        result = body
+    else:
+        result = send_email(body, email_kwargs.get('destination'), email_kwargs.get('subject'))
+    # result will be 0 if success or the body if failed
     return result
 

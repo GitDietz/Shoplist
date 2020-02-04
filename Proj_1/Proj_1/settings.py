@@ -1,5 +1,7 @@
 import os
+import logging.config
 from decouple import config
+from django.utils.log import DEFAULT_LOGGING
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -154,3 +156,11 @@ ACCOUNT_INVITATION_DAYS = 7
 INVITATIONS_PER_USER = 7
 INVITE_MODE = True
 
+# LOGGING CONFIG
+LOG_ROOT = os.path.join(BASE_DIR, 'Logs')
+# importing logger settings
+try:
+    from .logger_settings import *
+except Exception as e:
+    # in case of any error, pass silently.
+    pass

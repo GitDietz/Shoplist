@@ -8,6 +8,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Ht
 
 from .filters import UserFilter, GroupFilter
 from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
+import logging
 from .models import Item, Merchant, ShopGroup
 
 from Proj_1.utils import *
@@ -16,14 +17,14 @@ from datetime import date
 
 def get_session_list_choice(request):
     try:
-        print('In get_session_list_choice|try')
+        logging.getLogger("info_logger").info("get session choice")
         list_active = request.session['list']
         if list_active != '':
             return list_active
         else:
             return None
     except KeyError:
-        print('In get_session_list_choice | except')
+        logging.getLogger("info_logger").info(f'no list in session, getting first option from DB')
         list_choices = ShopGroup.objects.filter(members=request.user)
         select_item = list_choices.first().id
         request.session['list'] = select_item
@@ -31,23 +32,24 @@ def get_session_list_choice(request):
 
 
 def get_user_list_property(request):
+    logging.getLogger("info_logger").info(f"get multiple properties | user = {request.user.username}")
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)
     active_list_name = ShopGroup.objects.filter(id=list_active_no).first()
     user_list_options = list_choices.count()
-    print(f'active list is {active_list_name}')
+    logging.getLogger("info_logger").info(f'active list is {active_list_name}')
     return list_choices, user_list_options, list_active_no, active_list_name
 
 
 def is_user_leader(request, list_no):
     """"to return boolean indicating that the particular user is a leader and can close/delete items"""
+    logging.getLogger("info_logger").info(f"user = {request.user.username}")
     leader_in_group = ShopGroup.objects.filter(id=list_no).filter(leaders=request.user).first()
-    # leader_in_group = active_list_name.objects.filter(leaders=request.user)
     if leader_in_group:
-        print('is_user_leader = true')
+        logging.getLogger("info_logger").info(f' user is leader')
         return True
     else:
-        print('is_user_leader = false')
+        logging.getLogger("info_logger").info(f' user is not leader')
         return False
 
 # class FilteredListView(ListView):
@@ -77,30 +79,31 @@ def is_user_leader(request, list_no):
 #  #################################  ITEM / AKA Shop #############
 @login_required
 def shop_create(request):
-    print(f'Shop|Create | user = {request.user.username}')
+    logging.getLogger("info_logger").info(f"view entered | user = {request.user.username}")
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     form = ItemForm(request.POST or None, list=list_active_no)
     title = 'Add purchase items'
     notice = ''
     if form.is_valid():
-        print(f'shop_create|valid form')
+        logging.getLogger("info_logger").info(f"form valid | user = {request.user.username}")
+
         # get the objects still to purchase and check if this new one is among them
         qs_tobuy = Item.objects.to_get()
         item = form.save(commit=False)
         this_found = qs_tobuy.filter(Q(description__iexact=item.description))
         for_group = ShopGroup.objects.filter(id=list_active_no).first()
         if this_found:
-            print('already listed')
+            logging.getLogger("info_logger").info(f"item exists | user = {request.user.username}")
             notice = 'Already listed ' + item.description
         else:
-            print('ok will add to list')
+            logging.getLogger("info_logger").info(f"item will be added | user = {request.user.username}")
             item.in_group = for_group
             item.description = item.description.title()
             item.requested = request.user
             # vendor_id=request.POST.get('vendor_select') #this returns the relevant ID i selected
             vendor_id = item.to_get_from
             # this_merchant = Merchant.objects.get(pk=vendor_id)
-            print(f'Vendor = {vendor_id}')
+            logging.getLogger("info_logger").info(f"item saving for vendor = {vendor_id}")
             item.to_get_from = vendor_id  # this_merchant
             item.date_requested = date.today()
             item.save()
@@ -123,24 +126,26 @@ def shop_create(request):
 
 @login_required
 def shop_list(request):
-    print(f'Shop | List | user = {request.user.username}')
-
+    logging.getLogger("info_logger").info(f"view entry | user = {request.user.username}")
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)
     if list_active_no is None:
+        logging.getLogger("info_logger").info(f"redirect to group selection | user = {request.user.username}")
         redirect('shop:group_select')
     active_list_name = ShopGroup.objects.filter(id=list_active_no).first()
     user_list_options = list_choices.count()
+
+    logging.getLogger("info_logger").info(f"active list is {active_list_name} | user = {request.user.username}")
     print(f'active list is {active_list_name}')
-    # print(f'list of groups {list_choices}')
-    # 2 buttons named can/done with the obj.id
     leader_status = is_user_leader(request, list_active_no)
 
     if request.user.is_authenticated():
         queryset_list = Item.objects.to_get_by_group(list_active_no)
         notice = ''
         if request.POST and (request.user.is_staff or leader_status):
-            print(f'this is the post dict {request.POST}')
+            logging.getLogger("info_logger").info(f"form submitted | user = {request.user.username}")
+            # print(f'this is the post dict {request.POST}')
+            logging.getLogger("info_logger").info(f"establish item to purchase or cancel | user = {request.user.username}")
             cancel_item = in_post(request.POST, 'cancel_item')
             purchased_item = in_post(request.POST, 'got_item')
 
@@ -148,17 +153,18 @@ def shop_list(request):
                 item_to_update = max(cancel_item, purchased_item)
                 instance = get_object_or_404(Item, id=item_to_update)
                 if cancel_item != 0:
-                    print(f'to cancel item {cancel_item}')
+                    logging.getLogger("info_logger").info(f'to cancel item {cancel_item}')
                     instance.cancelled = request.user
                 elif purchased_item != 0:
-                    print(f'to mark as purchased item {purchased_item}')
+                    logging.getLogger("info_logger").info(f'purchased item {purchased_item}')
                     instance.purchased = request.user
                     instance.date_purchased = date.today()
                 instance.save()
             else:
-                print('No objects to update')
+                logging.getLogger("info_logger").info(f'No objects to update')
         elif request.POST:
             notice = "You can't update the items"
+            logging.getLogger("info_logger").info(f"no permission to update | user = {request.user.username}")
 
         context = {
             'title': 'Your shopping list',
@@ -167,8 +173,6 @@ def shop_list(request):
             'user_lists': user_list_options,
             'is_leader': leader_status,
             'notice': notice,
-            # 'group_list':list_choices,
-            # 'group_form':group_form,
         }
         return render(request, 'item_list.html', context)
     else:
@@ -177,12 +181,14 @@ def shop_list(request):
 
 @login_required
 def shop_detail(request, pk):
-    print(f'Shop|detail|user = {request.user.username}')
+    logging.getLogger("info_logger").info(f"user = {request.user.username}")
     item = get_object_or_404(Item, pk=pk)
     if request.user == item.requested or request.user.is_staff:
         if request.method == "POST":
+            logging.getLogger("info_logger").info(f"Posted form | user = {request.user.username}")
             form = ItemForm(request.POST, instance=item)
             if form.is_valid():
+                logging.getLogger("info_logger").info(f"valid form submitted | user = {request.user.username}")
                 form.save()
                 return HttpResponseRedirect(reverse('shop:shop_list'))
 
@@ -194,11 +200,12 @@ def shop_detail(request, pk):
         }
         return render(request, template_name, context)
     else:
+        logging.getLogger("info_logger").info(f"diverting to the list view | user = {request.user.username}")
         return redirect('shop:shop_list')
 
 
 def shop_detail_ra(request, pk=None):
-    # really over complicated this one
+    # really over complicated this one - OBSOLETE
 
     print(f'Shop|detail|user = {request.user.username}')
 
@@ -226,6 +233,7 @@ def shop_detail_ra(request, pk=None):
             return render(request, 'item_detail.html', context)
         else:
             raise Http404
+
 
 #  ################################# User's GROUP #############
 @login_required
@@ -255,6 +263,7 @@ def user_group_select(request):
         'notice': notice,
     }
     return render(request, template_name, context)
+
 
 #  ################################# GROUP #############
 @login_required
@@ -316,6 +325,7 @@ def group_delete(request, pk):
     return render(request, template_name, context)
 
 # ################################# MERCHANT #############
+
 @login_required
 def merchant_list(request):
     print(f'Merchant|List | user = {request.user.username}')

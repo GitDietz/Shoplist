@@ -18,3 +18,7 @@ h1 {
 .custom-text-xs {
   font-size: calc(10% + 1vw + 1vh);
 }
+
+.nav a {
+    color: #e5dbdb;
+}

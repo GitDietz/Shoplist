@@ -5,8 +5,10 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
+from urllib.parse import urlencode
 
 import datetime
+import logging
 import uuid
 from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
@@ -26,7 +28,7 @@ send_result = ''
 def create_key():
     salt = uuid.uuid4().hex
     key = sha_constructor(salt.encode()).hexdigest()
-    print(f'created key is {key}')
+    logging.getLogger("info_logger").info(f'created key is {key}')
     return key
 
 def is_existing_user(email):
@@ -58,17 +60,15 @@ class InvitationUsedCallback(object):
 
 def invited(request, key=None, extra_context=None):
     if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
+        logging.getLogger("info_logger").info('Able to invite')
         if key and is_key_valid(key):
             template_name = 'invitation/invited.html'
-            # add here switch for when the user is already registered - use a different template
-            #
-
+            logging.getLogger("info_logger").info("Valid key")
         else:
             template_name = 'invitation/wrong_invitation_key.html'
         extra_context = extra_context is not None and extra_context.copy() or {}
         extra_context.update({'invitation_key': key})
         return None
-            # direct_to_template(request, template_name, extra_context)
     else:
         return HttpResponseRedirect(reverse('registration_register'))
 
@@ -104,21 +104,21 @@ def invite(request):
 
     template_name = 'invitation_form.html'
     invite_selection = ShopGroup.objects.managed_by(request.user) # to do add this!
-    print(f'can select from {invite_selection}')
+    logging.getLogger("info_logger").info(f'can select from {invite_selection}')
 
     if request.method == 'POST':
-        print(f'Invite| Post section |{request.user}')
+        logging.getLogger("info_logger").info('Post section | user={request.user}')
         # form = InvitationKeyForm(request.POST)
         if form.is_valid():
             InvitationKey = form.save(commit=False)
             data = request.POST.copy()
             email = data.get('email')
-            print(f'form Data is {data}')
+            # print(f'form Data is {data}')
 
             InvitationKey.key = create_key()
             InvitationKey.from_user = request.user
             InvitationKey.invited_email = email
-            print('going to save invitation key')
+            logging.getLogger("info_logger").info('going to save invitation key')
             InvitationKey.save()
             email_kwargs = {"key": InvitationKey.key,
                             "invitee": data.get('invite_name'),
@@ -126,18 +126,31 @@ def invite(request):
                             "group_name": InvitationKey.invite_to_group,
                             "destination": data.get('email'),
                             "subject": "Your invitation to join"}
-            print(email_kwargs)
+            # print(email_kwargs)
             send_result = email_main(is_existing_user(email), **email_kwargs)
             if send_result != 0:
-                print('email send failed')
-                print(send_result)
-            return HttpResponseRedirect(reverse('invitations:invitation_completed'))
+                logging.getLogger("info_logger").info('email send failed')
+                #  send_result contains the body
+                base_url = reverse('invitations:complete')
+                query_string = urlencode({'send_result': send_result})
+                url = f'{base_url},{query_string}'
+
+                return redirect(url)
+            else:
+                logging.getLogger("info_logger").info("email sent")
+                return  redirect('invitations:complete')
+                # format redirect to contain the send_result
+                # return HttpResponseRedirect(reverse('invitations:invitation_completed', kwargs={'send_result': send_result}))
+                #return redirect('invitations:complete', kwargs={'send_result': send_result})
+
+
         else:
+            logging.getLogger("info_logger").info("errors on form, return to form")
             print(f'Form errors: {form.errors}')
 
-    print('Invite | Outside Post section')
+    logging.getLogger("info_logger").info('Outside Post section')
     if not invite_selection:
-        print('no invite possible - not a manager')
+        logging.getLogger("info_logger").info('no invite possible - not a manager')
         form_option = 'refer'
     else:
         form_option = 'fill'
@@ -150,9 +163,10 @@ def invite(request):
 
 
 @login_required()
-def completed(request, send_result=None):
+def complete(request): #  send_result=None
     template_name = 'invitation_complete.html'
-    print(f'Invite Complete|parameter = {send_result} ')
+    send_result = request.GET.get('send_result')
+    logging.getLogger("info_logger").info(f'Invite Complete|parameter = {send_result} ')
     context = {
         'title': 'Sent invite',
         'invite': send_result}
@@ -165,7 +179,7 @@ def invite_select_view(request):
     open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=request.user.email)
 
     if open_invites.count() == 0:
-        # redirect to the other form
+        logging.getLogger("info_logger").info("redirect to select a group")
         return redirect('set_group')
     else:
         if request.POST:
@@ -175,12 +189,12 @@ def invite_select_view(request):
                 item_to_update = max(accept_item, reject_item)
                 instance = get_object_or_404(InvitationKey, id=item_to_update)
                 if accept_item != 0:
-                    print(f'to accept item {accept_item}')
+                    logging.getLogger("info_logger").info(f'to accept item {accept_item}')
                     group_instance = get_object_or_404(ShopGroup, name=instance.invite_to_group.name)
                     group_instance.members.add(request.user)
                     instance.invite_used = True
                 elif reject_item != 0:
-                    print(f'to mark as reject item {reject_item}')
+                    logging.getLogger("info_logger").info(f'to mark as reject item {reject_item}')
                     instance.invite_used = True
 
                 instance.save()

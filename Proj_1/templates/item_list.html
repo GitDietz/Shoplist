@@ -11,18 +11,6 @@
     {% if user_lists > 1 %}
         <a href="{% url 'shop:group_select' %}" class="top-menu"><i class="far fa-random" title="Switch to other list"></i></a>
     {% endif %}<br>
-    <!--{% if group_list %}
-    <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            User's Lists
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {% for group in group_list%}
-            <a class="dropdown-item">{{group.name}}</a>
-            {% endfor %}
-          </div>
-    </div>
-{% endif %}-->
 <a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
 {% if object_list%}
 

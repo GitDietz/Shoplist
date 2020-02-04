@@ -1,0 +1,21 @@
+2020-01-25 00:33:54,326  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_list  129  view entry | user = James  
+2020-01-25 00:33:54,327  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_session_list_choice  20  get session choice  
+2020-01-25 00:33:54,328  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_list  138  active list is Crazyshoppers | user = James  
+2020-01-25 00:33:54,328  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  is_user_leader  46  user = James  
+2020-01-25 00:33:54,329  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  is_user_leader  52   user is not leader  
+2020-01-25 00:33:56,778  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_create  82  view entered | user = James  
+2020-01-25 00:33:56,778  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_user_list_property  35  get multiple properties | user = James  
+2020-01-25 00:33:56,778  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_session_list_choice  20  get session choice  
+2020-01-25 00:33:56,779  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_user_list_property  40  active list is Crazyshoppers  
+2020-01-25 00:34:05,267  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_create  82  view entered | user = James  
+2020-01-25 00:34:05,267  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_user_list_property  35  get multiple properties | user = James  
+2020-01-25 00:34:05,268  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_session_list_choice  20  get session choice  
+2020-01-25 00:34:05,268  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_user_list_property  40  active list is Crazyshoppers  
+2020-01-25 00:34:05,269  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_create  88  form valid | user = James  
+2020-01-25 00:34:05,270  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_create  99  item will be added | user = James  
+2020-01-25 00:34:05,270  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_create  106  item saving for vendor = None  
+2020-01-25 00:34:05,286  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_list  129  view entry | user = James  
+2020-01-25 00:34:05,287  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  get_session_list_choice  20  get session choice  
+2020-01-25 00:34:05,288  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  shop_list  138  active list is Crazyshoppers | user = James  
+2020-01-25 00:34:05,288  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  is_user_leader  46  user = James  
+2020-01-25 00:34:05,289  INFO  5780  /Users/dieterthierry/Documents/Workspace/Shoplist/Proj_1/shop/views.py  is_user_leader  52   user is not leader  
