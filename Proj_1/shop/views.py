@@ -158,7 +158,6 @@ def shop_list(request):
     user_list_options = list_choices.count()
 
     logging.getLogger("info_logger").info(f"active list is {active_list_name} | user = {request.user.username}")
-    print(f'active list is {active_list_name}')
     # leader status allows user to see the action buttons and to perform their actions
     leader_status = is_user_leader(request, list_active_no)
 
@@ -167,7 +166,6 @@ def shop_list(request):
         notice = ''
         if request.POST and (request.user.is_staff or leader_status):
             logging.getLogger("info_logger").info(f"form submitted | user = {request.user.username}")
-            # print(f'this is the post dict {request.POST}')
             logging.getLogger("info_logger").info(f"which item to purchase or cancel | user = {request.user.username}")
             cancel_item = in_post(request.POST, 'cancel_item')
             purchased_item = in_post(request.POST, 'got_item')
@@ -272,23 +270,24 @@ def shop_detail_ra(request, pk=None):
 #  ################################# User's GROUP #############
 @login_required
 def user_group_select(request):
-    print(f'user_group_select |user = {request.user.username}')
+    logging.getLogger("info_logger").info(f'user = {request.user.username}')
     notice = ''
-    # get the lists the user is member of
+    logging.getLogger("info_logger").info(f'get the lists the user is member of')
     list_choices = ShopGroup.objects.filter(members=request.user)
     # pass the members groups to form
     group_form = UsersGroupsForm(data=ShopGroup.objects.filter(members=request.user))
-    print(f'list of groups {list_choices}')
+    logging.getLogger("info_logger").info(f'list of groups {list_choices}')
     template_name = 'group_select.html'
 
     if request.method == 'POST':
         select_item = in_post(request.POST, 'pick_item')
         if select_item != 0:
             request.session['list'] = select_item
-            print(f'selected list is {select_item}')
+            logging.getLogger("info_logger").info(f'selected list is {select_item}')
             return redirect('shop:shop_list')
         else:
             notice = 'No list selected'
+            logging.getLogger("info_logger").info(f'nothing selected, return to form')
 
     context = {
         'title': 'Please select which group you want to view and edit',
@@ -302,7 +301,7 @@ def user_group_select(request):
 #  ################################# GROUP #############
 @login_required
 def group_detail(request, pk=None, shopgroup_obj=None):
-    print(f'Shop|group detail|user = {request.user.username}| id = {pk}')
+    logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
     if pk:
         shopgroup_obj = get_object_or_404(ShopGroup, pk=pk)
 
@@ -313,12 +312,12 @@ def group_detail(request, pk=None, shopgroup_obj=None):
             form.save()
             return HttpResponseRedirect(reverse('shop:group_list'))
         else:
-            print(f'Form errors: {form.errors}')
+            logging.getLogger("info_logger").info(f'Form errors: {form.errors}')
     else:
         form = ShopGroupForm(instance=shopgroup_obj)
 
     template_name = 'group.html'
-    print('Outside Post section')
+    logging.getLogger("info_logger").info(f'Outside Post section')
     context = {
         'title': 'Create or Update Group',
         'form': form,
@@ -329,7 +328,7 @@ def group_detail(request, pk=None, shopgroup_obj=None):
 
 @login_required
 def group_list(request):
-    print(f'Group|List | user = {request.user.username}')
+    logging.getLogger("info_logger").info(f'user = {request.user.username}')
     if request.user.is_staff:
         queryset_list = ShopGroup.objects.all()
         notice = ''
@@ -363,7 +362,7 @@ def group_delete(request, pk):
 
 @login_required
 def merchant_list(request):
-    print(f'Merchant|List | user = {request.user.username}')
+    logging.getLogger("info_logger").info(f'user = {request.user.username}')
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     queryset_list = Merchant.objects.filter(for_group_id=list_active_no)
     notice = ''
@@ -378,25 +377,25 @@ def merchant_list(request):
 @login_required
 def merchant_detail(request, id=None):
     # 10/1/20 mod to use list as part of merchant model
-    print(f'Merchant | Create or Edit | user = {request.user.username}')
+    logging.getLogger("info_logger").info(f'user = {request.user.username}')
     instance = get_object_or_404(Merchant, id=id)
     form = MerchantForm(request.POST or None)
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     title = 'Add or Edit Merchant'
     notice = ''
     if request.method == 'POST' and form.is_valid():
-        print(f'merchant |valid form')
+        logging.getLogger("info_logger").info(f'valid form')
 
         qs = Merchant.objects.all()
         form.save(commit=False)
         this_found = qs.filter(Q(name__iexact=Merchant.name))
         if this_found:
-            print('Already in list')
+            logging.getLogger("info_logger").info(f'Merchant already in list')
             notice = 'Already listed ' + Merchant.name.title()
         else:
-            print(f'ok will add {Merchant.name} to list')
+            logging.getLogger("info_logger").info(f'ok will add {Merchant.name} to list')
             Merchant.name = Merchant.title()
-            print('Adding list reference')
+            # Adding list reference
             Merchant.for_group = active_list_name
             Merchant.save()
             notice = 'Added ' + Merchant.name
@@ -420,20 +419,19 @@ def merchant_create(request):
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     form = MerchantForm(request.POST or None, list=list_active_no, default=active_list_name)
     if request.method == "POST":
-
+        logging.getLogger("info_logger").info(f'from submitted')
         if form.is_valid():
             try:
                 item = form.save(commit=False)
-                # print(f'ok will add {Merchant.name} to list')
                 item.name = form.cleaned_data['name'].title()
-                print('Adding list reference')
+                # Adding list reference
                 # item.for_group = active_list_name
                 item.save()
                 return HttpResponseRedirect(reverse('shop:merchant_list'))
             except DatabaseError:
                 raise ValidationError('That Merchant already exists in this group')
         else:
-            print(form.errors)
+            logging.getLogger("info_logger").info(f'Error on form {form.errors}')
 
     template_name = 'merchant.html'
     context = {
@@ -448,9 +446,11 @@ def merchant_create(request):
 def merchant_update(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
     if request.method == "POST":
+        logging.getLogger("info_logger").info(f'form submitted')
         form = MerchantForm(request.POST, instance=merchant)
         if form.is_valid():
             form.save()
+            logging.getLogger("info_logger").info(f'complete - direct to list')
             return HttpResponseRedirect(reverse('shop:merchant_list'))
 
     template_name = 'merchant.html'
@@ -467,6 +467,7 @@ def merchant_delete(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
     if request.method == 'POST' and request.user.is_staff:
         merchant.delete()
+        logging.getLogger("info_logger").info(f'merchant deleted')
         return HttpResponseRedirect(reverse('shop:merchant_list'))
 
     template_name = 'merchant_delete.html'

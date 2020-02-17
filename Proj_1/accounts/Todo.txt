@@ -1,6 +1,6 @@
 All identified tasks to complete
 --------------------------------
-done url for register
-base template with register link if the user is not logged in
+done - url for register
+done - base template with register link if the user is not logged in
 add logging
     account views
