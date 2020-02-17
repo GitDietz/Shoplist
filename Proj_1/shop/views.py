@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import DatabaseError
 from django.db.models import Q
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, redirect
 
 from .filters import UserFilter, GroupFilter
 from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
@@ -16,6 +16,10 @@ from datetime import date
 
 
 def get_session_list_choice(request):
+    """
+    get the list choice from session or set it using the first group this user is in
+    handle the odd case when user is not in a group - should not happen outside DEV
+    """
     try:
         logging.getLogger("info_logger").info("get session choice")
         list_active = request.session['list']
@@ -26,12 +30,19 @@ def get_session_list_choice(request):
     except KeyError:
         logging.getLogger("info_logger").info(f'no list in session, getting first option from DB')
         list_choices = ShopGroup.objects.filter(members=request.user)
-        select_item = list_choices.first().id
-        request.session['list'] = select_item
-        return select_item
+        if list_choices:
+            select_item = list_choices.first().id
+            request.session['list'] = select_item
+            return select_item
+        else:
+            return None
 
 
 def get_user_list_property(request):
+    """
+    get the list information for the user
+    :return: multiple values
+    """
     logging.getLogger("info_logger").info(f"get multiple properties | user = {request.user.username}")
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)
@@ -79,6 +90,11 @@ def is_user_leader(request, list_no):
 #  #################################  ITEM / AKA Shop #############
 @login_required
 def shop_create(request):
+    """
+    responds to the item create template
+    if 'add multiple items' is selected on the submit button the same submission form will return
+    else the list view will be returned
+    """
     logging.getLogger("info_logger").info(f"view entered | user = {request.user.username}")
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     form = ItemForm(request.POST or None, list=list_active_no)
@@ -126,6 +142,12 @@ def shop_create(request):
 
 @login_required
 def shop_list(request):
+    """
+    shows the list of unfulfilled items in the particular list
+    responds to item cancel requests and item fulfilled requests
+    also hands off to the item edit view
+    """
+    # get the active list for the user
     logging.getLogger("info_logger").info(f"view entry | user = {request.user.username}")
     list_choices = ShopGroup.objects.filter(members=request.user)
     list_active_no = get_session_list_choice(request)
@@ -137,6 +159,7 @@ def shop_list(request):
 
     logging.getLogger("info_logger").info(f"active list is {active_list_name} | user = {request.user.username}")
     print(f'active list is {active_list_name}')
+    # leader status allows user to see the action buttons and to perform their actions
     leader_status = is_user_leader(request, list_active_no)
 
     if request.user.is_authenticated():
@@ -145,7 +168,7 @@ def shop_list(request):
         if request.POST and (request.user.is_staff or leader_status):
             logging.getLogger("info_logger").info(f"form submitted | user = {request.user.username}")
             # print(f'this is the post dict {request.POST}')
-            logging.getLogger("info_logger").info(f"establish item to purchase or cancel | user = {request.user.username}")
+            logging.getLogger("info_logger").info(f"which item to purchase or cancel | user = {request.user.username}")
             cancel_item = in_post(request.POST, 'cancel_item')
             purchased_item = in_post(request.POST, 'got_item')
 
@@ -181,12 +204,23 @@ def shop_list(request):
 
 @login_required
 def shop_detail(request, pk):
+    """
+    allows the edit of the item if its the requestor or the leader/s of the group
+    :param pk: for the instance of the item
+    :param request:
+    :return: divert to shoplist
+    """
     logging.getLogger("info_logger").info(f"user = {request.user.username}")
     item = get_object_or_404(Item, pk=pk)
-    if request.user == item.requested or request.user.is_staff:
+    active_list = item.in_group.id
+    user_is_leader = False
+    if request.user in item.in_group.leaders.all():
+        user_is_leader = True
+
+    if request.user == item.requested or user_is_leader:
         if request.method == "POST":
             logging.getLogger("info_logger").info(f"Posted form | user = {request.user.username}")
-            form = ItemForm(request.POST, instance=item)
+            form = ItemForm(request.POST, instance=item, list=active_list)
             if form.is_valid():
                 logging.getLogger("info_logger").info(f"valid form submitted | user = {request.user.username}")
                 form.save()
@@ -195,7 +229,7 @@ def shop_detail(request, pk):
         template_name = 'item_detail.html'
         context = {
             'title': 'Update Item',
-            'form': ItemForm(instance=item),
+            'form': ItemForm(instance=item, list=active_list),
             'notice': '',
         }
         return render(request, template_name, context)
@@ -326,6 +360,7 @@ def group_delete(request, pk):
 
 # ################################# MERCHANT #############
 
+
 @login_required
 def merchant_list(request):
     print(f'Merchant|List | user = {request.user.username}')
@@ -455,5 +490,5 @@ def search(request):
 @login_required
 def simple_item_list(request):
     item_list = Item.objects.to_get()
-    group_filter = GroupFilter(request.GET,queryset=item_list)
+    group_filter = GroupFilter(request.GET, queryset=item_list)
     return render(request, 'filter_list.html', {'filter': group_filter})

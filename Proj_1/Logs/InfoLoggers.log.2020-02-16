@@ -1,0 +1,53 @@
+2020-02-16 08:36:45,094  INFO [views-shop_detail] user = Maco
+2020-02-16 08:43:57,097  INFO [views-shop_detail] user = Maco
+2020-02-16 08:43:57,640  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 08:43:57,641  INFO [views-get_session_list_choice] get session choice
+2020-02-16 08:43:57,644  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 08:43:57,644  INFO [views-is_user_leader] user = Maco
+2020-02-16 08:43:57,646  INFO [views-is_user_leader]  user is leader
+2020-02-16 08:44:00,794  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 08:44:00,795  INFO [views-get_session_list_choice] get session choice
+2020-02-16 08:44:00,797  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 08:44:00,797  INFO [views-is_user_leader] user = Maco
+2020-02-16 08:44:00,799  INFO [views-is_user_leader]  user is leader
+2020-02-16 08:44:05,116  INFO [views-shop_detail] user = Maco
+2020-02-16 08:44:38,487  INFO [views-shop_detail] user = Maco
+2020-02-16 08:50:04,801  INFO [views-shop_detail] diverting to the list view | user = Maco
+2020-02-16 08:50:04,831  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 08:50:04,831  INFO [views-get_session_list_choice] get session choice
+2020-02-16 08:50:04,833  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 08:50:04,834  INFO [views-is_user_leader] user = Maco
+2020-02-16 08:50:04,835  INFO [views-is_user_leader]  user is leader
+2020-02-16 08:50:31,789  INFO [views-shop_detail] user = Maco
+2020-02-16 08:51:01,809  INFO [views-shop_detail] user = Maco
+2020-02-16 08:51:18,377  INFO [views-shop_detail] user = Maco
+2020-02-16 15:07:57,744  INFO [views-shop_detail] user = Maco
+2020-02-16 15:10:09,454  INFO [views-shop_detail] user = Maco
+2020-02-16 15:23:27,661  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 15:23:27,662  INFO [views-get_session_list_choice] get session choice
+2020-02-16 15:23:27,663  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 15:23:27,663  INFO [views-is_user_leader] user = Maco
+2020-02-16 15:23:27,665  INFO [views-is_user_leader]  user is leader
+2020-02-16 15:23:32,218  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 15:23:32,219  INFO [views-get_session_list_choice] get session choice
+2020-02-16 15:23:32,220  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 15:23:32,220  INFO [views-is_user_leader] user = Maco
+2020-02-16 15:23:32,221  INFO [views-is_user_leader]  user is leader
+2020-02-16 15:23:34,399  INFO [views-shop_create] view entered | user = Maco
+2020-02-16 15:23:34,400  INFO [views-get_user_list_property] get multiple properties | user = Maco
+2020-02-16 15:23:34,400  INFO [views-get_session_list_choice] get session choice
+2020-02-16 15:23:34,401  INFO [views-get_user_list_property] active list is Jimjam
+2020-02-16 15:23:44,144  INFO [views-shop_create] view entered | user = Maco
+2020-02-16 15:23:44,144  INFO [views-get_user_list_property] get multiple properties | user = Maco
+2020-02-16 15:23:44,144  INFO [views-get_session_list_choice] get session choice
+2020-02-16 15:23:44,145  INFO [views-get_user_list_property] active list is Jimjam
+2020-02-16 15:23:44,147  INFO [views-shop_create] form valid | user = Maco
+2020-02-16 15:23:44,149  INFO [views-shop_create] item will be added | user = Maco
+2020-02-16 15:23:44,149  INFO [views-shop_create] item saving for vendor = Shops
+2020-02-16 15:23:44,166  INFO [views-shop_list] view entry | user = Maco
+2020-02-16 15:23:44,166  INFO [views-get_session_list_choice] get session choice
+2020-02-16 15:23:44,167  INFO [views-shop_list] active list is Jimjam | user = Maco
+2020-02-16 15:23:44,167  INFO [views-is_user_leader] user = Maco
+2020-02-16 15:23:44,168  INFO [views-is_user_leader]  user is leader
+2020-02-16 15:23:49,316  INFO [views-shop_detail] user = Maco
+2020-02-16 15:33:25,793  INFO [views-shop_detail] user = Maco

@@ -14,14 +14,13 @@ from hashlib import sha1 as sha_constructor
 # from registration.views import register as registration_register
 # from registration.forms import RegistrationForm
 
-from .email import mail_config_tester, test_send_email, email_main
+from .email import email_main
 from invitation.models import InvitationKey
-from .forms import InvitationKeyForm, InvitationSelectForm
+from .forms import InvitationKeyForm
 from shop.models import ShopGroup
 from Proj_1.utils import in_post
 
 is_key_valid = InvitationKey.objects.is_key_valid
-# remaining_invitations_for_user = InvitationKey.objects.remaining_invitations_for_user
 
 send_result = ''
 
@@ -59,6 +58,10 @@ class InvitationUsedCallback(object):
 
 
 def invited(request, key=None, extra_context=None):
+    '''
+    The view when the user clicks on the link in the email
+    if no valid invite key divert to the registration view
+    '''
     if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
         logging.getLogger("info_logger").info('Able to invite')
         if key and is_key_valid(key):
@@ -72,31 +75,6 @@ def invited(request, key=None, extra_context=None):
     else:
         return HttpResponseRedirect(reverse('registration_register'))
 
-
-# def register(request, backend=None, success_url=None,
-#              form_class=RegistrationForm, profile_callback=None,
-#              template_name='registration/registration_form.html',
-#              extra_context=None):
-#     extra_context = extra_context is not None and extra_context.copy() or {}
-#     if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
-#         if 'invitation_key' in request.REQUEST:
-#             invitation_key = request.REQUEST['invitation_key']
-#             extra_context.update({'invitation_key': invitation_key})
-#             if is_key_valid(invitation_key):
-#                 profile_callback = InvitationUsedCallback(invitation_key,
-#                                                           profile_callback)
-#                 return registration_register(request, backend, success_url, form_class,
-#                                              profile_callback, template_name, extra_context)
-#             else:
-#                 extra_context.update({'invalid_key': True})
-#         else:
-#             extra_context.update({'no_key': True})
-#         template_name = 'invitation/wrong_invitation_key.html'
-#         return direct_to_template(request, template_name, extra_context)
-#     else:
-#         return registration_register(request, success_url, form_class,
-#                                      profile_callback, template_name, extra_context)
-#
 
 @login_required()
 def invite(request):
@@ -130,18 +108,18 @@ def invite(request):
             send_result = email_main(is_existing_user(email), **email_kwargs)
             if send_result != 0:
                 logging.getLogger("info_logger").info('email send failed')
-                #  send_result contains the body
+                #  send_result contains the body. The below creates a custom url to contain the invite text
                 base_url = reverse('invitations:complete')
                 query_string = urlencode({'send_result': send_result})
-                url = f'{base_url},{query_string}'
+                url = f'{base_url}?{query_string}'
 
                 return redirect(url)
             else:
                 logging.getLogger("info_logger").info("email sent")
-                return  redirect('invitations:complete')
+                return redirect('invitations:complete')
                 # format redirect to contain the send_result
                 # return HttpResponseRedirect(reverse('invitations:invitation_completed', kwargs={'send_result': send_result}))
-                #return redirect('invitations:complete', kwargs={'send_result': send_result})
+                # return redirect('invitations:complete', kwargs={'send_result': send_result})
 
 
         else:
@@ -163,18 +141,25 @@ def invite(request):
 
 
 @login_required()
-def complete(request): #  send_result=None
+def complete(request):
     template_name = 'invitation_complete.html'
-    send_result = request.GET.get('send_result')
-    logging.getLogger("info_logger").info(f'Invite Complete|parameter = {send_result} ')
+    mail_body = request.GET.get('send_result')
+    logging.getLogger("info_logger").info(f'Invite Complete|parameter = {mail_body} ')
     context = {
         'title': 'Sent invite',
-        'invite': send_result}
+        'result': mail_body}
 
     return render(request, template_name, context)
 
 @login_required()
 def invite_select_view(request):
+    '''
+    when an existing user logs in - check if there are invites
+        no invites - send to set_group
+        invites - show list to accept or decline the invite
+        No more invites - send to set_group
+    :return:
+    '''
     title = 'Select to join group/s'
     open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=request.user.email)
 
@@ -209,30 +194,5 @@ def invite_select_view(request):
                'title': title}
 
     return render(request, "invite_select_list.html", context=context)
-
-
-# def invite_draft(request, success_url=None,
-#            form_class=InvitationKeyForm,
-#            template_name='invitation/invitation_form.html',
-#            extra_context=None):
-#     extra_context = extra_context is not None and extra_context.copy() or {}
-#     remaining_invitations = remaining_invitations_for_user(request.user)
-#     if request.method == 'POST':
-#         form = form_class(data=request.POST, files=request.FILES)
-#         if remaining_invitations > 0 and form.is_valid():
-#             invitation = InvitationKey.objects.create_invitation(request.user)
-#             invitation.send_to(form.cleaned_data["email"])
-#             # success_url needs to be dynamically generated here; setting a
-#             # a default value using reverse() will cause circular-import
-#             # problems with the default URLConf for this application, which
-#             # imports this file.
-#             return HttpResponseRedirect(success_url or reverse('invitation_complete'))
-#     else:
-#         form = form_class()
-#     extra_context.update({
-#         'form': form,
-#         'remaining_invitations': remaining_invitations,
-#     })
-#     return None # direct_to_template(request, template_name, extra_context)
 
 

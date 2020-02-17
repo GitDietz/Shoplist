@@ -48,25 +48,6 @@ class InvitationKeyManager(models.Manager):
         else:
             return False
 
-    # def create_invitation(self, user, invite_to_group):
-    #     """
-    #     Create an ``InvitationKey`` and returns it.
-    #     """
-    #     salt = uuid.uuid4().hex
-    #     # key = sha_constructor("%s%s%s" % (datetime.datetime.now(), salt, user.username)).hexdigest()
-    #     key = sha_constructor(salt.encode()).hexdigest()
-    #     print(f'key is {key}')
-    #     return self.create(from_user=user, key=key, invite_to_group=invite_to_group)
-
-    # def remaining_invitations_for_user(self, user):
-    #     """
-    #     Return the number of remaining invitations for a given ``User``.
-    #     """
-    #     invitation_user, created = InvitationUser.objects.get_or_create(
-    #         inviter=user,
-    #         defaults={'invitations_remaining': settings.INVITATIONS_PER_USER})
-    #     return invitation_user.invitations_remaining
-
     def delete_expired_keys(self):
         for key in self.all():
             if key.key_expired():

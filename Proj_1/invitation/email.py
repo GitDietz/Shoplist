@@ -71,7 +71,7 @@ def email_main(existing_user, **email_kwargs):
     else:
         url = url_builder_existing_user()
     body = body_builder(url, email_kwargs.get('invitee'), email_kwargs.get('user_name'), email_kwargs.get('group_name'))
-    force_fail = True
+    force_fail = False
     if force_fail:
         result = body
     else:

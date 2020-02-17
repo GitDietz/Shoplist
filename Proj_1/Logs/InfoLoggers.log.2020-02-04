@@ -1,0 +1,68 @@
+2020-02-04 17:06:24,554  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 17:06:24,555  INFO [views-invite] Outside Post section
+2020-02-04 17:06:41,554  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 17:06:41,554  INFO [views-invite] Post section | user={request.user}
+2020-02-04 17:06:41,562  INFO [views-create_key] created key is b6f5877aed2e36bf3b22d95f89d0aa3c9babd398
+2020-02-04 17:06:41,562  INFO [views-invite] going to save invitation key
+2020-02-04 17:07:35,951  INFO [views-invite] email sent
+2020-02-04 17:07:35,985  INFO [views-completed] Invite Complete|parameter = None 
+2020-02-04 17:22:41,021  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 17:22:41,021  INFO [views-invite] Outside Post section
+2020-02-04 17:23:07,732  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 17:23:07,732  INFO [views-invite] Post section | user={request.user}
+2020-02-04 17:23:07,741  INFO [views-create_key] created key is 66b025c0c43d2dd4ec5b5eeb6f09a956812d36d6
+2020-02-04 17:23:07,741  INFO [views-invite] going to save invitation key
+2020-02-04 17:23:23,480  INFO [email-send_email] str(e)
+2020-02-04 17:23:34,409  INFO [views-invite] email send failed
+2020-02-04 17:23:49,929  INFO [views-invite] email sent
+2020-02-04 20:47:59,049  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 20:47:59,050  INFO [views-invite] Post section | user={request.user}
+2020-02-04 20:47:59,059  INFO [views-create_key] created key is a39c709eaa75e06aa65c2a9a4e2ec09351db31ee
+2020-02-04 20:47:59,059  INFO [views-invite] going to save invitation key
+2020-02-04 20:48:10,495  INFO [views-invite] email send failed
+2020-02-04 20:48:11,539  INFO [views-invite] email sent
+2020-02-04 20:55:29,102  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 20:55:29,102  INFO [views-invite] Post section | user={request.user}
+2020-02-04 20:55:29,112  INFO [views-create_key] created key is ae65ab4f7948b0f8506ac5c12d890f87d80fc09a
+2020-02-04 20:55:29,113  INFO [views-invite] going to save invitation key
+2020-02-04 20:55:39,540  INFO [views-invite] email send failed
+2020-02-04 20:55:40,299  INFO [views-invite] email sent
+2020-02-04 20:58:56,549  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 20:58:56,550  INFO [views-invite] Post section | user={request.user}
+2020-02-04 20:58:56,559  INFO [views-create_key] created key is 5078e585bf08b59de7e1ccf019016699828e3145
+2020-02-04 20:58:56,559  INFO [views-invite] going to save invitation key
+2020-02-04 20:59:05,260  INFO [views-invite] email send failed
+2020-02-04 20:59:05,771  INFO [views-invite] email sent
+2020-02-04 20:59:43,680  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 20:59:43,680  INFO [views-invite] Post section | user={request.user}
+2020-02-04 20:59:43,689  INFO [views-create_key] created key is 0fe0275dd2ab6ce1250fbbea9bd340aeeba2ac0a
+2020-02-04 20:59:43,689  INFO [views-invite] going to save invitation key
+2020-02-04 20:59:54,371  INFO [views-invite] email send failed
+2020-02-04 20:59:54,647  INFO [views-invite] email sent
+2020-02-04 21:02:07,195  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:02:07,195  INFO [views-invite] Outside Post section
+2020-02-04 21:02:22,840  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:02:22,840  INFO [views-invite] Post section | user={request.user}
+2020-02-04 21:02:22,849  INFO [views-create_key] created key is 420014241eb4ec2332e0b533af9fdfc19d088a28
+2020-02-04 21:02:22,849  INFO [views-invite] going to save invitation key
+2020-02-04 21:02:32,895  INFO [views-invite] email send failed
+2020-02-04 21:02:33,405  INFO [views-invite] email sent
+2020-02-04 21:15:38,798  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:15:38,798  INFO [views-invite] Outside Post section
+2020-02-04 21:16:00,838  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:16:00,838  INFO [views-invite] Outside Post section
+2020-02-04 21:17:04,303  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:17:04,303  INFO [views-invite] Post section | user={request.user}
+2020-02-04 21:17:04,312  INFO [views-create_key] created key is 688eb9e37d0748994a6b14f02e6b99be0a3b0fd2
+2020-02-04 21:17:04,312  INFO [views-invite] going to save invitation key
+2020-02-04 21:17:04,316  INFO [views-invite] email send failed
+2020-02-04 21:17:04,317  INFO [views-invite] email sent
+2020-02-04 21:31:13,783  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:31:13,783  INFO [views-invite] Outside Post section
+2020-02-04 21:32:14,831  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:32:14,831  INFO [views-invite] Outside Post section
+2020-02-04 21:32:32,899  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-04 21:32:32,899  INFO [views-invite] Post section | user={request.user}
+2020-02-04 21:32:32,903  INFO [views-create_key] created key is 2a88eb17959b3a05212b1ca79ceb08e275fc03f9
+2020-02-04 21:32:32,903  INFO [views-invite] going to save invitation key
+2020-02-04 21:32:32,908  INFO [views-invite] email send failed

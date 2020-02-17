@@ -46,7 +46,7 @@ class UserLoginForm(forms.Form):
 
 
 class UserRegisterForm(forms.ModelForm):
-    email = forms.EmailField(label='Email Address') # overrides the default
+    email = forms.EmailField(label='Email Address', required=True) # overrides the default
     email2 = forms.EmailField(label='Confirm Email')
     password = forms.CharField(widget=forms.PasswordInput)
     joining = forms.CharField(label='Group to join or create', max_length=100)
@@ -72,7 +72,7 @@ class UserRegisterForm(forms.ModelForm):
 
         email_qs = User.objects.filter(email=email)
         if email_qs.exists():
-            raise ValidationError('Emails already exists, please enter another one')
+            raise ValidationError('Emails already exists for a user, please enter another one')
 
         # return super(UserRegisterForm, self).clean()
         return email2

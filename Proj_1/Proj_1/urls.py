@@ -8,8 +8,7 @@ from accounts.views import (
         register_view,
         logout_view,
         home_view,
-        set_group,
-        temp_register_view)
+        set_group)
 # from shop.views import merchant_list
 # complaining about the absolute import
 
@@ -24,9 +23,9 @@ urlpatterns = [
     url(r'set_group/', set_group, name='set_group'),
     url(r'^shop/', include("shop.urls", namespace='shop')),
     # url(r'shop/merchant',merchant_list),
-    url(r'register/', temp_register_view, name='register'),
-    url(r'register_new/', register_view, name='register_new'),
-    url(r'^', home_view ,name='home'),
+    url(r'register/', register_view, name='register'),
+    # url(r'register_new/', register_view, name='register_new'), obsolete
+    url(r'^', home_view, name='home'),
 
     ]
 

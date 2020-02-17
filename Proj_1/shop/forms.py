@@ -26,7 +26,8 @@ class ItemForm(forms.ModelForm):
         list = kwargs.pop('list')
         active_list = Merchant.objects.filter(for_group_id=list)
 
-        super(ItemForm, self).__init__(*args, **kwargs)
+        # super(ItemForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['to_get_from'].queryset = active_list
 
     def clean_description(self):
