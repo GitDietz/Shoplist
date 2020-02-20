@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'register/', register_view, name='register'),
     # url(r'register_new/', register_view, name='register_new'), obsolete
     url(r'^', home_view, name='home'),
-
     ]
 
 if settings.DEBUG:      # ensures that this will only be done in DEV

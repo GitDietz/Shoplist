@@ -98,21 +98,35 @@ def invite(request):
             InvitationKey.invited_email = email
             logging.getLogger("info_logger").info('going to save invitation key')
             InvitationKey.save()
-            email_kwargs = {"key": InvitationKey.key,
-                            "invitee": data.get('invite_name'),
-                            "user_name": request.user.username,
-                            "group_name": InvitationKey.invite_to_group,
-                            "destination": data.get('email'),
-                            "subject": "Your invitation to join"}
-            # print(email_kwargs)
-            send_result = email_main(is_existing_user(email), **email_kwargs)
+            send_status=''
+            if not is_existing_user(email):
+                # not an existing user, attempt to email
+                email_kwargs = {"key": InvitationKey.key,
+                                "invitee": data.get('invite_name'),
+                                "user_name": request.user.username,
+                                "group_name": InvitationKey.invite_to_group,
+                                "destination": data.get('email'),
+                                "subject": "Your invitation to join"}
+                send_result = email_main(False, **email_kwargs)
+                # result can be 0 if success or a string if failed
+                if send_result == 0:
+                    send_status = 'pass'
+                else:
+                    send_status = 'fail'
+                    send_result = ('<p>Automatic sending failed.<br>Please copy the text below, paste'
+                                   ' it into a new email and send it to your friend.<br><br></p>') + send_result
+            else:
+                # 3rd case not sending an email
+                send_status = 'not sent'
+                send_result = ('<p>The person you invited is already a member on the site<br>'
+                               'Next time they log on, they will be able to join the group</p>')
+
             if send_result != 0:
-                logging.getLogger("info_logger").info('email send failed')
+                logging.getLogger("info_logger").info('there is a send_result')
                 #  send_result contains the body. The below creates a custom url to contain the invite text
                 base_url = reverse('invitations:complete')
                 query_string = urlencode({'send_result': send_result})
                 url = f'{base_url}?{query_string}'
-
                 return redirect(url)
             else:
                 logging.getLogger("info_logger").info("email sent")
@@ -120,7 +134,6 @@ def invite(request):
                 # format redirect to contain the send_result
                 # return HttpResponseRedirect(reverse('invitations:invitation_completed', kwargs={'send_result': send_result}))
                 # return redirect('invitations:complete', kwargs={'send_result': send_result})
-
 
         else:
             logging.getLogger("info_logger").info("errors on form, return to form")
@@ -147,9 +160,24 @@ def complete(request):
     logging.getLogger("info_logger").info(f'Invite Complete|parameter = {mail_body} ')
     context = {
         'title': 'Sent invite',
-        'result': mail_body}
+        'mail_body': mail_body}
 
     return render(request, template_name, context)
+
+
+@login_required()
+def simple(request):
+    # just to test the delivery of  a safe string to the browser
+    template_name = 'invitation_complete.html'
+    mail_body = ('The person you invited is already a member on the site<br>'
+                 'Next time they log on, they will be able to join the group')
+
+    context = {
+        'title': 'Sent invite',
+        'mail_body': mail_body}
+
+    return render(request, template_name, context)
+
 
 @login_required()
 def invite_select_view(request):

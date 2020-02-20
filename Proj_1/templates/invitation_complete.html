@@ -1,15 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if not result %}
-    <h2>{% "Invitation sent" %}</h2>
-    <p>
-    {% trans "Your friend will receive an email with your invitation soon!" %}
-    </p>
-{% else %}
-    <p>
-    {% "Automatic sending failed. Please copy the text below, paste it into a new email and send it to your friend." %}
-    </p><br><div>{{ result }}</div>
+{% if mail_body %}
+    <h2>{# "Invitation sent" #}</h2>
+    <div>{{ mail_body | safe}}</div>
+    <br>
 {% endif %}
-
+<a href="{% url 'shop:shop_list' %}">Back to the List</a>
 {% endblock %}

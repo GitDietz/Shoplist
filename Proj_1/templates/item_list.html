@@ -16,7 +16,9 @@
 
 {% for obj in object_list %}
     <div class="row p-1 mb-2 bg-light text-dark">
-        <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}{%if obj.to_get_from != None %}
+        <div class="col-md-8 col-xs-8">{{ obj.name_qty }}
+
+            {% if obj.to_get_from != None %}
             <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}
             {% if obj.in_group != None %}{% endif %}
             </span> {% endif %}

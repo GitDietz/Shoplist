@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 
-from .views import invite, invited, complete, invite_select_view
+from .views import invite, invited, complete, invite_select_view, simple
 
 urlpatterns = [
     url(r'^invite/$', invite, name='invitation_invite'),
@@ -9,5 +9,6 @@ urlpatterns = [
    # url(r'^complete/(?P<send_result>).*', complete, name='complete'),
     url(r'^complete/.*', complete, name='complete'),
     url(r'^select/$', invite_select_view, name='invite_select'),
+    url(r'^test/$', simple, name='simple'),
     ]
 

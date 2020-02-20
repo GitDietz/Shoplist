@@ -146,6 +146,7 @@ def shop_list(request):
     shows the list of unfulfilled items in the particular list
     responds to item cancel requests and item fulfilled requests
     also hands off to the item edit view
+    list will only be one the user is a member of
     """
     # get the active list for the user
     logging.getLogger("info_logger").info(f"view entry | user = {request.user.username}")
@@ -164,7 +165,7 @@ def shop_list(request):
     if request.user.is_authenticated():
         queryset_list = Item.objects.to_get_by_group(list_active_no)
         notice = ''
-        if request.POST and (request.user.is_staff or leader_status):
+        if request.POST: # and (request.user.is_staff or leader_status):
             logging.getLogger("info_logger").info(f"form submitted | user = {request.user.username}")
             logging.getLogger("info_logger").info(f"which item to purchase or cancel | user = {request.user.username}")
             cancel_item = in_post(request.POST, 'cancel_item')
@@ -173,14 +174,15 @@ def shop_list(request):
             if cancel_item != 0 or purchased_item != 0:
                 item_to_update = max(cancel_item, purchased_item)
                 instance = get_object_or_404(Item, id=item_to_update)
-                if cancel_item != 0:
-                    logging.getLogger("info_logger").info(f'to cancel item {cancel_item}')
-                    instance.cancelled = request.user
-                elif purchased_item != 0:
-                    logging.getLogger("info_logger").info(f'purchased item {purchased_item}')
-                    instance.purchased = request.user
-                    instance.date_purchased = date.today()
-                instance.save()
+                if instance.requested == request.user or leader_status:
+                    if cancel_item != 0:
+                        logging.getLogger("info_logger").info(f'to cancel item {cancel_item}')
+                        instance.cancelled = request.user
+                    elif purchased_item != 0:
+                        logging.getLogger("info_logger").info(f'purchased item {purchased_item}')
+                        instance.purchased = request.user
+                        instance.date_purchased = date.today()
+                    instance.save()
             else:
                 logging.getLogger("info_logger").info(f'No objects to update')
         elif request.POST:
@@ -188,7 +190,7 @@ def shop_list(request):
             logging.getLogger("info_logger").info(f"no permission to update | user = {request.user.username}")
 
         context = {
-            'title': 'Your shopping list',
+            'title': 'Your list',
             'object_list': queryset_list,
             'active_list': active_list_name,
             'user_lists': user_list_options,

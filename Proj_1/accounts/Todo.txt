@@ -4,3 +4,6 @@ done - url for register
 done - base template with register link if the user is not logged in
 add logging
     account views
+existing user to add a new group
+check that inviting an existing user does not send email
+

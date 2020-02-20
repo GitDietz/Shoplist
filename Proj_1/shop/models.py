@@ -60,6 +60,7 @@ class ShopGroupManager(models.Manager):
 
 class ShopGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    purpose = models.CharField(max_length=200, blank=False)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
     manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='member_of')
@@ -72,6 +73,11 @@ class ShopGroup(models.Model):
 
     def __str__(self):
         return self.name.title()
+
+    @property
+    def info(self):
+        label = f'Created by by {self.manager} - {self.purpose}'
+        return label
 
 
 class Merchant(models.Model):
@@ -94,6 +100,7 @@ class Item(models.Model):
     purchased = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='buy_by')
     cancelled = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='cancel_by')
     description = models.CharField(max_length=100)
+    quantity = models.CharField(max_length=30, blank=True, null=True, default='1')
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
@@ -106,10 +113,11 @@ class Item(models.Model):
 
     def __str__(self):
         this_merchant = self.to_get_from.name
+        label = self.description.title()
+        if len(self.quantity) > 0:
+            label = label + '[' + self.quantity + ']'
         if this_merchant:
-            label = self.description.title() + ' @ ' + this_merchant
-        else:
-            label = self.description.title()
+            label = label + ' @ ' + this_merchant
         return str(label)
 
     def get_absolute_url(self):
@@ -122,4 +130,9 @@ class Item(models.Model):
         else:
             return False
 
-
+    @property
+    def name_qty(self):
+        if len(self.quantity) > 0:
+            return f'{self.description} [{self.quantity}]'
+        else:
+            return self.description

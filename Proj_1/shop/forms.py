@@ -1,7 +1,56 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from .models import Item, Merchant,ShopGroup
 from pagedown.widgets import PagedownWidget
 
+#
+# class SpanWidget(forms.Widget):
+#     """
+#     Renders a value wrapped in a <span> tag.
+#     Requires use of specific form support. (see ReadonlyForm
+#     or ReadonlyModelForm)
+#     """
+#
+#     def render(self, name, value, attrs=None):
+#         final_attrs = self.build_attrs(attrs, name=name)
+#         return mark_safe(u'<span%s >%s</span>' % (
+#             forms.util.flatatt(final_attrs), self.original_value))
+#
+#     def value_from_datadict(self, data, files, name):
+#         return self.original_value
+#
+#
+# class SpanField(forms.Field):
+#     '''A field which renders a value wrapped in a <span> tag.
+#
+#     Requires use of specific form support. (see ReadonlyForm
+#     or ReadonlyModelForm)
+#     '''
+#
+#     def __init__(self, *args, **kwargs):
+#         kwargs['widget'] = kwargs.get('widget', SpanWidget)
+#         super(SpanField, self).__init__(*args, **kwargs)
+#
+#
+# class Readonly(object):
+#     """Base class for ReadonlyForm and ReadonlyModelForm which provides
+#     the meat of the features described in the docstings for those classes.
+#     """
+#     class NewMeta:
+#         readonly = tuple()
+#
+#     def __init__(self, *args, **kwargs):
+#         super(Readonly, self).__init__(*args, **kwargs)
+#         readonly = self.NewMeta.readonly
+#         if not readonly:
+#             return
+#         for name, field in self.fields.items():
+#             if name in readonly:
+#                 field.widget = SpanWidget()
+#             elif not isinstance(field, SpanField):
+#                 continue
+#             field.widget.original_value = str(getattr(self.instance, name))
+#
 
 class ItemForm(forms.ModelForm):
     description = forms.CharField()  # widget=PagedownWidget)
@@ -13,11 +62,12 @@ class ItemForm(forms.ModelForm):
         model = Item
         fields = [
             'description',
+            'quantity',
             # 'vendor_select',
             'to_get_from',
             # 'date_requested',
             # 'purchased',
-            # 'requested',
+            # 'requested', not going to change requested
             # 'date_purchased'
         ]
 
@@ -29,12 +79,26 @@ class ItemForm(forms.ModelForm):
         # super(ItemForm, self).__init__(*args, **kwargs)
         super().__init__(*args, **kwargs)
         self.fields['to_get_from'].queryset = active_list
+        # not used part of the readonly
+        # self.fields['requested'].widget.attrs['readonly'] = True
 
     def clean_description(self):
         return self.cleaned_data['description'].title()
 
     def clean_to_get_from(self):
         return self.cleaned_data['to_get_from']
+
+    def clean_quantity(self):
+        return self.cleaned_data['quantity']
+
+    # below is a method to effectively ignore any changes to the field making it read only,
+    # the form still responds to changes, so there may be an inactive setting to add
+    # def clean_requested(self):
+    #     instance = getattr(self, 'instance', None)
+    #     if instance and instance.id:
+    #         return instance.requested
+    #     else:
+    #         return self.cleaned_data['requested']
 
 
 class UsersGroupsForm(forms.ModelForm):

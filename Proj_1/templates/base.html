@@ -8,7 +8,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- -->
     <script src="https://kit.fontawesome.com/1f8531230c.js" crossorigin="anonymous"></script>
-    <title>{% block head_title %}My Shopping{% endblock head_title%}</title>
+    <title>{% block head_title %}My List{% endblock head_title%}</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href='{% static "css/base.css" %}'/>
     <!--this link method is subject to the directory name not changing
@@ -29,7 +29,7 @@
 
         {% include "messages_display.html" %}
         <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #8C8687;">
-            <a class="navbar-brand" href="#">Shopping List</a>
+            <a class="navbar-brand" href="#">Our List</a>
                     <div class="container">
                         <nav aria-label="breadcrumb">
                             <ul class="nav nav-pills nav-fill">
