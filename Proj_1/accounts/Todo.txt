@@ -5,5 +5,14 @@ done - base template with register link if the user is not logged in
 add logging
     account views
 existing user to add a new group
-check that inviting an existing user does not send email
+done - check that inviting an existing user does not send email
+implement register via email confirmation - now its possible to register without confirmation
+merchant edit error - list is not in the call - look at the
+
+
+
+=========
+Future
+=========
+Make merchant inactive and reactive if added again to a group
 
