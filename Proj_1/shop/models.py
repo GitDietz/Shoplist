@@ -55,6 +55,10 @@ class ShopGroupManager(models.Manager):
         new_group = self.create(name=name, manager=manager)
         return new_group
 
+    def member_of(self, user):
+        qs = super(ShopGroupManager, self).filter(members=user)
+        return qs
+
 
 # ## Models ## #
 
@@ -76,7 +80,7 @@ class ShopGroup(models.Model):
 
     @property
     def info(self):
-        label = f'Created by by {self.manager} - {self.purpose}'
+        label = f'Created by {self.manager} - {self.purpose}'
         return label
 
 

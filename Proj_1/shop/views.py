@@ -304,14 +304,26 @@ def user_group_select(request):
 @login_required
 def group_detail(request, pk=None, shopgroup_obj=None):
     logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
+
+    # if not pk or shoupgroup_obj:
+    # this is a new create - default member/leader and manager to user
+    # if pk and user=manager - can edit the name, can edit leaders-add or remove
+    # if pk and user=member -  can remove self
+    # if pk and user=leader - can remove self as user and leader
+
     if pk:
         shopgroup_obj = get_object_or_404(ShopGroup, pk=pk)
 
-    if request.method == "POST" and request.user.is_staff:
+    if request.method == "POST":
         print('In Post section')
         form = ShopGroupForm(request.POST, instance=shopgroup_obj)
         if form.is_valid():
+            # TODO: validation fix - needs a manager, 1 leader and 1 member at least
+            # TODO: PERMISSION LEVELS - on create only yourself is added
+            # role as member - remove self as leader, remove self as member
+            # role as manager - delete group
             form.save()
+            # TODO: change conditions of the group list so this will actually end there
             return HttpResponseRedirect(reverse('shop:group_list'))
         else:
             logging.getLogger("info_logger").info(f'Form errors: {form.errors}')
@@ -329,19 +341,35 @@ def group_detail(request, pk=None, shopgroup_obj=None):
 
 
 @login_required
+def group_maintenance(request, pk=None):
+    logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
+    if pk:
+        this_group = ShopGroup.objects.get(id=pk)
+        members = this_group.members.all()
+        leaders = this_group.leaders.all()
+        if request.method == "POST":
+            pass
+
+    else:
+        return redirect('shop:group_list')
+
+@login_required
 def group_list(request):
     logging.getLogger("info_logger").info(f'user = {request.user.username}')
-    if request.user.is_staff:
-        queryset_list = ShopGroup.objects.all()
-        notice = ''
-        context = {
-            'title': 'Group List',
-            'object_list': queryset_list,
-            'notice': notice,
-        }
-        return render(request, 'group_list.html', context)
-    else:
-        return redirect('shop:shop_list')
+    # if request.user.is_staff:
+    #    queryset_list = ShopGroup.objects.all().filter(members=request.user)
+    managed_list = ShopGroup.objects.managed_by(request.user)
+    member_list = ShopGroup.objects.member_of(request.user)
+    notice = ''
+    context = {
+        'title': 'Group List',
+        'managed_list': managed_list,
+        'member_list': member_list,
+        'notice': notice,
+    }
+    return render(request, 'group_list.html', context)
+    # else:
+    #     return redirect('shop:shop_list')
 
 
 @login_required()
@@ -358,6 +386,17 @@ def group_delete(request, pk):
         'notice': '',
     }
     return render(request, template_name, context)
+
+
+@login_required()
+def group_remove_member(request, pk):
+    group = get_object_or_404(ShopGroup, pk=pk)
+    group.members.remove(request.user)
+    # if request.method == 'POST' and request.user.is_staff:
+    #     group.delete()
+    #     return HttpResponseRedirect(reverse('shop:group_list'))
+
+    return redirect('shop:group_list')
 
 # ################################# MERCHANT #############
 
@@ -447,9 +486,10 @@ def merchant_create(request):
 @login_required
 def merchant_update(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
+    list = merchant.for_group
     if request.method == "POST":
         logging.getLogger("info_logger").info(f'form submitted')
-        form = MerchantForm(request.POST, instance=merchant)
+        form = MerchantForm(request.POST, instance=merchant, list=list.id, default=list)
         if form.is_valid():
             form.save()
             logging.getLogger("info_logger").info(f'complete - direct to list')
@@ -458,7 +498,7 @@ def merchant_update(request, pk):
     template_name = 'merchant.html'
     context = {
         'title': 'Update Merchant',
-        'form': MerchantForm(instance=merchant),
+        'form': MerchantForm(instance=merchant, list=list.id, default=list),
         'notice': '',
     }
     return render(request, template_name, context)

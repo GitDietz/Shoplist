@@ -12,6 +12,8 @@ from .views import (
     group_detail,
     group_list,
     group_delete,
+    group_maintenance,
+    group_remove_member,
     search,
     simple_item_list,
     user_group_select
@@ -25,6 +27,8 @@ urlpatterns = [
     url(r'^groups/(?P<pk>\d+)$', group_detail, name='group_update'),
     url(r'^groups/create$', group_detail, name='group_create'),
     url(r'^groups/delete/(?P<pk>\d+)$', group_delete, name='group_delete'),
+    url(r'^groups/maintain/(?P<pk>\d+)$', group_maintenance, name='group_maintenance'),
+    url(r'^groups/remove/(?P<pk>\d+)$', group_remove_member, name='group_remove_member'),
     url(r'^groups/$', group_list, name='group_list'),
     url(r'^group_select/$', user_group_select, name='group_select'),
     url(r'^merchants/$', merchant_list, name='merchant_list'),

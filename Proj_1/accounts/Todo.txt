@@ -7,7 +7,12 @@ add logging
 existing user to add a new group
 done - check that inviting an existing user does not send email
 implement register via email confirmation - now its possible to register without confirmation
-merchant edit error - list is not in the call - look at the
+done - merchant edit error - list is not in the call - look at the view to pass this
+document : merchant - who can edit ? anyone
+group - member must be able to remove self from group or as leader
+group - leader must be able to delete the group
+group - list only to show the ones user is member of
+
 
 
 

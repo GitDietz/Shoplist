@@ -159,7 +159,7 @@ class MerchantForm_RA(forms.ModelForm):
 class ShopGroupForm(forms.ModelForm):
     class Meta:
         model = ShopGroup
-        fields = ['name', 'manager', 'members', 'leaders']
+        fields = ['name', 'purpose', 'manager', 'members', 'leaders']
 
     def clean_leaders(self):
         l_leaders = self.cleaned_data['leaders']
