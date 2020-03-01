@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1><u>{{group_name}}</u> - {{ title }}</h1>
+<p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
+{% if member_list or leader_list %}
+ <form method="POST" action="." >
+     {% csrf_token %}
+    {{ form|crispy }}
+     <h4>Members of the group:</h4>
+     <h6>Remove members or set role to Leader</h6>
+    {% for obj in member_list %}
+
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-8 col-xs-8">
+                {{ obj.username }} ({{ obj.id }})</div>
+            <div class="col-md-4 col-xs-4">
+                <small>
+                    <a onclick="return confirm_action('Are you sure you want to remove user from the group?')"
+                      href="{% url 'shop:group_remove_member' pk=group_id user_id=obj.pk%}"><i class="far fa-sign-out-alt"></i></a>
+                    <a onclick="return confirm_action('Confirm you want to set this user as leader?')"
+                       href="{% url 'shop:group_make_leader' pk=group_id user_id=obj.pk%}"><i class="far fa-caret-square-up"></i></a>
+                </small>
+            </div>
+        </div>
+
+    {% endfor %}
+
+    {% if leader_list %}
+     <h4>Leaders in the group</h4>
+     <h5>Leaders can remove or mark items as complete</h5>
+     <h6>Remove as member or remove role of Leader</h6>
+    {% endif %}
+    {% for obj in leader_list %}
+
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-8 col-xs-8">
+                {{ obj.username }} ({{ obj.id }})</div>
+            <div class="col-md-4 col-xs-4">
+            <small>
+                <a onclick="return confirm_action('Are you sure you want user removed from the group?')"
+                    href="{% url 'shop:group_remove_member' pk=group_id user_id=obj.pk%}"><i class="far fa-sign-out-alt"></i></a>
+                <a onclick="return confirm_action('Confirm you want to set this user as regular user?')"
+                    href="{% url 'shop:group_remove_leader' pk=group_id user_id=obj.pk%}"><i class="far fa-caret-square-down"></i></a>
+            </small></div>
+        </div>
+
+    {% endfor %}
+     {% if unrelated and mode == 'debug' %}
+     <h4>Unrelated users - you can add them!</h4>
+     <h5>Remove from PROD</h5>
+    {% endif %}
+    {% for obj in unrelated %}
+
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-8 col-xs-8">
+                {{ obj.username }} ({{ obj.id }})</div>
+            <div class="col-md-4 col-xs-4">
+            <small><a href="{% url 'shop:group_add_member' pk=group_id user_id=obj.pk%}"><i class="far fa-sign-in-alt"></i></a>
+                <!--<a href="{% url 'shop:group_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a> -->
+            </small></div>
+        </div>
+
+    {% endfor %}
+</form>
+
+{% else %}
+    <p>No list yet!</p>
+{% endif %}
+
+    <!--
+    <div class="pagination">
+    <span class="step-links">
+        {% if object_list.has_previous %}
+            <a href="?{{ page_request_var }}={{ contacts.previous_page_number }}{% if request.Get.g %}&q={{ request.GET.q }}{% endif %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}
+        </span>
+
+        {% if object_list.has_next %}
+            <a href="?{{ page_request_var }}={{ object_list.next_page_number }}{% if request.Get.g %}&q={{ request.GET.q }}{% endif %}">next</a>
+        {% endif %}
+    </span>
+    </div>
+-->
+<script type="text/javascript">
+
+function confirm_action(in_message) {
+  var res = confirm(in_message);
+    if (res) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+{% endblock content %}

@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db import DatabaseError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, redirect
+from urllib.parse import urlencode
 
 from .filters import UserFilter, GroupFilter
 from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
@@ -87,7 +88,7 @@ def is_user_leader(request, list_no):
 #     filterset_class = ItemFilterSet
 
 
-#  #################################  ITEM / AKA Shop #############
+#  #################################  ITEM / AKA Shop #################################
 @login_required
 def shop_create(request):
     """
@@ -269,7 +270,7 @@ def shop_detail_ra(request, pk=None):
             raise Http404
 
 
-#  ################################# User's GROUP #############
+#  ################################# User's GROUP #################################
 @login_required
 def user_group_select(request):
     logging.getLogger("info_logger").info(f'user = {request.user.username}')
@@ -300,7 +301,7 @@ def user_group_select(request):
     return render(request, template_name, context)
 
 
-#  ################################# GROUP #############
+#  ################################# GROUP #################################
 @login_required
 def group_detail(request, pk=None, shopgroup_obj=None):
     logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
@@ -345,19 +346,33 @@ def group_maintenance(request, pk=None):
     logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
     if pk:
         this_group = ShopGroup.objects.get(id=pk)
-        members = this_group.members.all()
+        # the assumption here is that the member/leader/manager structure is correct
+        all_members = this_group.members.all()
         leaders = this_group.leaders.all()
+        members = all_members.exclude(pk__in=leaders)
+        all_users = User.objects.all()
+        unrelated = all_users.exclude(pk__in=all_members)
+        notice = ''
         if request.method == "POST":
             pass
-
+        context = {
+            'title': f'Group maintenance',
+            'group_name': this_group.name,
+            'leader_list': leaders,
+            'member_list': members,
+            'unrelated': unrelated,
+            'group_id': pk,
+            'notice': notice,
+            'mode': 'debug',
+        }
+        return render(request, 'group_manage.html', context)
     else:
         return redirect('shop:group_list')
+
 
 @login_required
 def group_list(request):
     logging.getLogger("info_logger").info(f'user = {request.user.username}')
-    # if request.user.is_staff:
-    #    queryset_list = ShopGroup.objects.all().filter(members=request.user)
     managed_list = ShopGroup.objects.managed_by(request.user)
     member_list = ShopGroup.objects.member_of(request.user)
     notice = ''
@@ -389,16 +404,55 @@ def group_delete(request, pk):
 
 
 @login_required()
-def group_remove_member(request, pk):
+def group_remove_self(request, pk):
+    """
+    when the user removes himself from the group. A different view for Managers to remove other members
+    """
     group = get_object_or_404(ShopGroup, pk=pk)
     group.members.remove(request.user)
-    # if request.method == 'POST' and request.user.is_staff:
-    #     group.delete()
-    #     return HttpResponseRedirect(reverse('shop:group_list'))
-
     return redirect('shop:group_list')
 
-# ################################# MERCHANT #############
+
+@login_required()
+def group_remove_leader(request, pk, user_id):
+    """
+    when the manager wants to remove the Leader role from a user
+    """
+    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    group = get_object_or_404(ShopGroup, pk=pk)
+    group.leaders.remove(user_id)
+    return redirect('shop:group_maintenance', pk=pk)
+
+
+@login_required()
+def group_remove_member(request, pk, user_id):
+    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    group = get_object_or_404(ShopGroup, pk=pk)
+    group.members.remove(user_id)
+    return redirect('shop:group_maintenance', pk=pk)
+
+
+@login_required()
+def group_make_leader(request, pk, user_id):
+    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    group = get_object_or_404(ShopGroup, pk=pk)
+    group.leaders.add(user_id)
+    return redirect('shop:group_maintenance', pk=pk)
+
+
+@login_required()
+def group_add_member(request, pk, user_id):
+    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    group = get_object_or_404(ShopGroup, pk=pk)
+    group.members.add(user_id)
+    return redirect('shop:group_maintenance', pk=pk)
+    # base_url = reverse('shop:group_maintenance', pk=pk)
+    # query_string = urlencode({'pk': pk})
+    # url = f'{base_url}?{query_string}'
+    # logging.getLogger("info_logger").info(f'url = {url}')
+
+
+# ################################# MERCHANT #################################
 
 
 @login_required
@@ -520,7 +574,7 @@ def merchant_delete(request, pk):
     }
     return render(request, template_name, context)
 
-# ################################# Experimental USER #############
+# ################################# Experimental USER #################################
 
 
 @login_required

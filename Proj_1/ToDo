@@ -1,0 +1,6 @@
+Items still to action:
+
+done - Add group option to Menu
+shopgroup create ensure that user = memebr=leader=manager
+User register form to get first and last Name as mandatory
+ensure views can't be reached by changing the url
