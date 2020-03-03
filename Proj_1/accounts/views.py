@@ -1,4 +1,5 @@
 import logging
+import re
 from django.conf import settings
 from django.contrib.auth import (
     authenticate,
@@ -6,10 +7,42 @@ from django.contrib.auth import (
     login,
     logout)
 
+from django.db.models import Q
 from django.shortcuts import render, redirect
+
 from .forms import UserLoginForm, UserRegisterForm
 from invitation.models import InvitationKey
 from shop.models import ShopGroup
+
+User = get_user_model()
+
+def create_next_increment_name(name):
+    pattern = r"(^[a-zA-Z '-]+)([0-9]+)"
+    match = re.match(pattern, name)
+    if match:
+        increment = match.group(2)
+        new_inc = int(increment) + 1
+        new_name = match.group(1) + str(new_inc)
+        name_length = len(match.group(1))
+
+        if len(new_name) > 30:
+            new_name = match.group(1)[:name_length-1] + str(new_inc)
+        return new_name
+    else:
+        return name + '1'
+
+
+def create_username(first_name, last_name):
+    logging.getLogger("info_logger").info(f'no username yet')
+
+    new_username = first_name[:15] + last_name[:10]
+    new_username.replace(' ', '')
+    this_user = User.objects.all().filter(Q(username__iexact=new_username))
+
+    while this_user.exists():
+        new_username = create_next_increment_name(new_username)
+        this_user = User.objects.all().filter(Q(username__iexact=new_username))
+    return new_username
 
 
 def login_view(request):
@@ -77,25 +110,31 @@ def register_view(request):
             # to be valid it was checked to not exist
 
             user = form.save(commit=False)
-
+            user.username = create_username(user.first_name, user.last_name)
             password = form.cleaned_data.get('password')
             user.set_password(password)
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
             user.save()
             logging.getLogger("info_logger").info(f'Saved user')
+
             new_group = ShopGroup.objects.create_group(target_group, user)
+            new_group.purpose = form.cleaned_data.get('purpose')
             new_group.save()
+
             new_group.members.add(user)
             new_group.leaders.add(user)
             logging.getLogger("info_logger").info(f'Added user to group')
+
             new_user = authenticate(username=user.username, password=password)
             login(request, new_user)
             logging.getLogger("info_logger").info(f'user logged in (authenticated)')
+
             user_list = new_group.id
             request.session['list'] = user_list
             logging.getLogger("info_logger").info(f'user list set in session')
             if next:
                 return redirect(next)
-            return redirect('/')
+                return redirect('/')
 
         logging.getLogger("info_logger").info(f'Form unbound')
         context = {'form': form,

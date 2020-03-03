@@ -51,21 +51,23 @@ class UserRegisterForm(forms.ModelForm):
     first_name = forms.CharField(label='First Name', required=True)
     last_name = forms.CharField(label='Last Name', required=True)
     password = forms.CharField(widget=forms.PasswordInput)
-    joining = forms.CharField(label='Group to join or create', max_length=100)
+    joining = forms.CharField(label='Group to create', max_length=100)
+    purpose = forms.CharField(label='What is this group for?', max_length=200)
 
     class Meta:
         model = User
         fields = [
-            'username',
+            # 'username',
             'email',
             'email2',
             'first_name',
             'last_name',
             'password',
             'joining',
+            'purpose'
         ]
-        widgets = {'username': forms.HiddenInput()}
-        initial = {'username': 'user1'}
+        # widgets = {'username': forms.HiddenInput()}
+        # initial = {'username': 'user1'}
     #possible to use a form level clean similar to the class above - validation will then show on the form itself and not the field
 
     def clean_email2(self): #this is 2 so it runs off the email2 field
@@ -95,14 +97,14 @@ class UserRegisterForm(forms.ModelForm):
         return target_group
 
 
-    def clean_username(self):
-        uname = self.cleaned_data.get('username')
-        print('in the username clean')
-        last_name = self.cleaned_data.get('first_name')
-        new_username = self.cleaned_data.get('first_name') + min(last_name[:2],'')
-        this_user = User.objects.all().filter(Q(username__iexact=new_username))
-        i=1
-        while this_user.exists():
-            this_user + str(i)
-            i+=1
-        return new_username
+    # def clean_username(self):
+    #     uname = self.cleaned_data.get('username')
+    #     print('in the username clean')
+    #     last_name = self.cleaned_data.get('first_name')
+    #     new_username = self.cleaned_data.get('first_name') + min(last_name[:2],'')
+    #     this_user = User.objects.all().filter(Q(username__iexact=new_username))
+    #     i=1
+    #     while this_user.exists():
+    #         this_user + str(i)
+    #         i+=1
+    #     return new_username
