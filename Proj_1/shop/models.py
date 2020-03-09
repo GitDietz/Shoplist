@@ -59,6 +59,9 @@ class ShopGroupManager(models.Manager):
         qs = super(ShopGroupManager, self).filter(members=user)
         return qs
 
+    def leaders(self, user):
+        qs = super(ShopGroupManager, self).filter(leaders=user)
+        return qs
 
 # ## Models ## #
 

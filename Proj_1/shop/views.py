@@ -513,8 +513,7 @@ def merchant_detail(request, id=None):
 @login_required
 def merchant_create(request):
     # 10/1/20 now need to have the group instance available to add
-    # list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
-    #
+
     list_choices, user_list_options, list_active_no, active_list_name = get_user_list_property(request)
     form = MerchantForm(request.POST or None, list=list_active_no, default=active_list_name)
     if request.method == "POST":
@@ -566,7 +565,12 @@ def merchant_update(request, pk):
 def merchant_delete(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
     # if the user is a leader then allow to remove a group
-    leader_group = merchant.for_group.leaders
+    this_group = merchant.for_group # this is a object
+    # group_obj = ShopGroup.objects.filter(id=this_group.id) # this now returns the relevant shopgroup object
+    #leader_group = group_obj.leaders # as an attribute this does not work
+    group_obj = ShopGroup.objects.get(id=this_group.id)
+    leaders = group_obj.leaders
+    other = group_obj.values_list('leaders', flat=True)
     if request.method == 'POST' and request.user.is_staff:
         merchant.delete()
         logging.getLogger("info_logger").info(f'merchant deleted')
