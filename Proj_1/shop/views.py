@@ -422,7 +422,7 @@ def group_remove_leader(request, pk, user_id):
     """
     when the manager wants to remove the Leader role from a user
     """
-    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    logging.getLogger("info_logger").info(f'group = {pk}, user to remove as leader = {user_id}')
     group = get_object_or_404(ShopGroup, pk=pk)
     group.leaders.remove(user_id)
     return redirect('shop:group_maintenance', pk=pk)
@@ -430,7 +430,7 @@ def group_remove_leader(request, pk, user_id):
 
 @login_required()
 def group_remove_member(request, pk, user_id):
-    logging.getLogger("info_logger").info(f'group = {pk}, user to add as leader = {user_id}')
+    logging.getLogger("info_logger").info(f'group = {pk}, user to remove as member = {user_id}')
     group = get_object_or_404(ShopGroup, pk=pk)
     group.members.remove(user_id)
     return redirect('shop:group_maintenance', pk=pk)
@@ -564,18 +564,15 @@ def merchant_update(request, pk):
 @login_required
 def merchant_delete(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
-    users = User.objects.all()
+    # users = User.objects.all()
     # if the user is a leader then allow to remove a group
-    this_group = merchant.for_group # this is a object
-    # group_obj = ShopGroup.objects.filter(id=this_group.id) # this now returns the relevant shopgroup object
-    #leader_group = group_obj.leaders # as an attribute this does not work
-    # group_obj = ShopGroup.objects.get(id=this_group.id)
-    group_obj = ShopGroup.objects.filter(id=this_group.id).filter(user_id__in=Subquery())
-    leaders = group_obj.leaders
-    # other = group_obj.values_list('leaders', flat=True)
-    if request.method == 'POST' and request.user.is_staff:
-        merchant.delete()
-        logging.getLogger("info_logger").info(f'merchant deleted')
+
+    if request.method == 'POST':
+        this_group = merchant.for_group
+        leader = is_user_leader(request, this_group.id)
+        if leader:
+            merchant.delete()
+            logging.getLogger("info_logger").info(f'merchant deleted')
         return HttpResponseRedirect(reverse('shop:merchant_list'))
 
     template_name = 'merchant_delete.html'
