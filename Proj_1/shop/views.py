@@ -564,13 +564,15 @@ def merchant_update(request, pk):
 @login_required
 def merchant_delete(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
+    users = User.objects.all()
     # if the user is a leader then allow to remove a group
     this_group = merchant.for_group # this is a object
     # group_obj = ShopGroup.objects.filter(id=this_group.id) # this now returns the relevant shopgroup object
     #leader_group = group_obj.leaders # as an attribute this does not work
-    group_obj = ShopGroup.objects.get(id=this_group.id)
+    # group_obj = ShopGroup.objects.get(id=this_group.id)
+    group_obj = ShopGroup.objects.filter(id=this_group.id).filter(user_id__in=Subquery())
     leaders = group_obj.leaders
-    other = group_obj.values_list('leaders', flat=True)
+    # other = group_obj.values_list('leaders', flat=True)
     if request.method == 'POST' and request.user.is_staff:
         merchant.delete()
         logging.getLogger("info_logger").info(f'merchant deleted')
