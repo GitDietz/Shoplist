@@ -1,6 +1,26 @@
 Items still to action:
-
+======================
+done - url for register
+done - base template with register link if the user is not logged in
+done - check that inviting an existing user does not send email
+done - merchant edit error - list is not in the call - look at the view to pass this
+done - group - member must be able to remove self from group or as leader
+done - group - leader must be able to delete the group
+done - group - list only to show the ones user is member of
+Done - group - existing user to add a new group
 done - Add group option to Menu
-shopgroup create ensure that user = memebr=leader=manager
-User register form to get first and last Name as mandatory
+done - shopgroup create ensure that user = memebr=leader=manager
+
+
+document : merchant - who can edit ? anyone
+there must always be at least one leader/member - remove the group if the last one is deleted
+implement register via email confirmation - now its possible to register without confirmation
+add logging
+    account views
+
+
+Done - User register form to get first and last Name as mandatory
 ensure views can't be reached by changing the url
+
+Document
+========

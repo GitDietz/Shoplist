@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Ht
 from urllib.parse import urlencode
 
 from .filters import UserFilter, GroupFilter
-from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm
+from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm,NewGroupCreateForm
 import logging
 from .models import Item, Merchant, ShopGroup
 
@@ -23,10 +23,17 @@ def get_session_list_choice(request):
     """
     try:
         logging.getLogger("info_logger").info("get session choice")
-        list_active = request.session['list']
+        list_active = request.session['list'] # the session can contain value that is no longer in DB
         if list_active != '':
-            return list_active
+            logging.getLogger("info_logger").info(f"session value = {list_active}")
+            if ShopGroup.objects.filter(id=list_active).exists():
+                return list_active
+            else:
+                logging.getLogger("info_logger").info('No such value in DB, new selection required')
+                request.session.pop('list')
+                return None
         else:
+            logging.getLogger("info_logger").info(f"session NO value = {list_active}")
             return None
     except KeyError:
         logging.getLogger("info_logger").info(f'no list in session, getting first option from DB')
@@ -111,7 +118,7 @@ def shop_create(request):
         for_group = ShopGroup.objects.filter(id=list_active_no).first()
         if this_found:
             logging.getLogger("info_logger").info(f"item exists | user = {request.user.username}")
-            notice = 'Already listed ' + item.description
+            notice = 'Already listed : ' + item.description
         else:
             logging.getLogger("info_logger").info(f"item will be added | user = {request.user.username}")
             item.in_group = for_group
@@ -129,7 +136,7 @@ def shop_create(request):
         if 'add_one' in request.POST:
             return redirect('shop:shop_list')
         else:
-            form = ItemForm()
+            form = ItemForm(None, list=list_active_no)
 
     context = {
         'title': title,
@@ -303,33 +310,27 @@ def user_group_select(request):
 
 #  ################################# GROUP #################################
 @login_required
-def group_detail(request, pk=None, shopgroup_obj=None):
+def group_detail_rb(request, pk=None, shopgroup_obj=None):
     logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
-
-    # if not pk or shoupgroup_obj:
-    # this is a new create - default member/leader and manager to user
-    # if pk and user=manager - can edit the name, can edit leaders-add or remove
-    # if pk and user=member -  can remove self
-    # if pk and user=leader - can remove self as user and leader
-
     if pk:
         shopgroup_obj = get_object_or_404(ShopGroup, pk=pk)
 
     if request.method == "POST":
-        print('In Post section')
-        form = ShopGroupForm(request.POST, instance=shopgroup_obj)
+        form = NewGroupCreateForm(request.POST, instance=shopgroup_obj)
         if form.is_valid():
-            # TODO: validation fix - needs a manager, 1 leader and 1 member at least
-            # TODO: PERMISSION LEVELS - on create only yourself is added
-            # role as member - remove self as leader, remove self as member
-            # role as manager - delete group
-            form.save()
-            # TODO: change conditions of the group list so this will actually end there
+            new_group = form.save(commit=False)
+            new_group.name = form.cleaned_data['joining']
+            new_group.purpose = form.cleaned_data['purpose']
+            new_group.manager = request.user
+            new_group.save()
+            new_group.members.add(request.user)
+            new_group.leaders.add(request.user)
+
             return HttpResponseRedirect(reverse('shop:group_list'))
         else:
             logging.getLogger("info_logger").info(f'Form errors: {form.errors}')
     else:
-        form = ShopGroupForm(instance=shopgroup_obj)
+        form = NewGroupCreateForm(instance=shopgroup_obj) # will be none if new
 
     template_name = 'group.html'
     logging.getLogger("info_logger").info(f'Outside Post section')
@@ -410,6 +411,9 @@ def group_remove_self(request, pk):
     """
     group = get_object_or_404(ShopGroup, pk=pk)
     group.members.remove(request.user)
+    # if this is the last member, delete the group
+    if group.members.count() == 0:
+        group.delete()
     return redirect('shop:group_list')
 
 
@@ -561,6 +565,8 @@ def merchant_update(request, pk):
 @login_required
 def merchant_delete(request, pk):
     merchant = get_object_or_404(Merchant, pk=pk)
+    # if the user is a leader then allow to remove a group
+    leader_group = merchant.for_group.leaders
     if request.method == 'POST' and request.user.is_staff:
         merchant.delete()
         logging.getLogger("info_logger").info(f'merchant deleted')

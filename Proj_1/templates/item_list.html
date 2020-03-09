@@ -36,7 +36,7 @@
                 <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
             {% endif %}
             <!--<small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>-->
-            <span style="font-size:1.2vw;">{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</span>
+            <span style="font-size:1.2vw;">{{ obj.date_requested | date:"d M"}} ({{ obj.requested.first_name }})</span>
         </div>
     </div>
 {% endfor %}

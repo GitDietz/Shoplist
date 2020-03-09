@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+
 from django.utils.safestring import mark_safe
 from .models import Item, Merchant,ShopGroup
 from pagedown.widgets import PagedownWidget
@@ -171,3 +174,25 @@ class ShopGroupForm(forms.ModelForm):
         else:
             raise forms.ValidationError('Only listed members can be leaders')
 
+
+class NewGroupCreateForm(forms.ModelForm):
+    """
+    for existing members that want to create a new group
+    """
+    joining = forms.CharField(label='Group to create', max_length=100)
+    purpose = forms.CharField(label='What is this group for?', max_length=200)
+
+    class Meta:
+        model = ShopGroup
+        fields = [
+            'joining',
+            'purpose']
+
+    def clean_joining(self):
+        target_group = self.cleaned_data.get('joining')
+        # now check that the group does not exists and create it, rather do this in the form
+        qs_shop_group = ShopGroup.objects.all()
+        this_found = qs_shop_group.filter(Q(name__iexact=target_group))
+        if this_found.exists():
+            raise ValidationError('That group already exists, please enter another name')
+        return target_group

@@ -9,7 +9,7 @@
      {% csrf_token %}
     {{ form|crispy }}
      <h4>Members of the group:</h4>
-     <h6>Remove members or set role to Leader</h6>
+     <h6><i>Remove members or set role to Leader</i></h6>
     {% for obj in member_list %}
 
         <div class="row p-1 mb-2 bg-light text-dark">
@@ -28,9 +28,9 @@
     {% endfor %}
 
     {% if leader_list %}
-     <h4>Leaders in the group</h4>
-     <h5>Leaders can remove or mark items as complete</h5>
-     <h6>Remove as member or remove role of Leader</h6>
+     <h4>Leaders in the group:</h4>
+     <h5><i>Leaders can remove or mark items as complete</i></h5>
+     <h6><i>Remove as member or remove role of Leader</i></h6>
     {% endif %}
     {% for obj in leader_list %}
 
@@ -48,8 +48,8 @@
 
     {% endfor %}
      {% if unrelated and mode == 'debug' %}
-     <h4>Unrelated users - you can add them!</h4>
-     <h5>Remove from PROD</h5>
+     <h4><u>Unrelated users - you can add them!</u></h4>
+     <h5>!! Remove from PROD !!</h5>
     {% endif %}
     {% for obj in unrelated %}
 

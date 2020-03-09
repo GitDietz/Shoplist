@@ -48,7 +48,7 @@ class UserLoginForm(forms.Form):
 class UserRegisterForm(forms.ModelForm):
     email = forms.EmailField(label='Email Address', required=True) # overrides the default
     email2 = forms.EmailField(label='Confirm Email')
-    first_name = forms.CharField(label='First Name', required=True)
+    first_name = forms.CharField(label='First Name (will display for others)', required=True)
     last_name = forms.CharField(label='Last Name', required=True)
     password = forms.CharField(widget=forms.PasswordInput)
     joining = forms.CharField(label='Group to create', max_length=100)

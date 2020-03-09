@@ -134,7 +134,7 @@ def register_view(request):
             logging.getLogger("info_logger").info(f'user list set in session')
             if next:
                 return redirect(next)
-                return redirect('/')
+            return redirect('set_group')
 
         logging.getLogger("info_logger").info(f'Form unbound')
         context = {'form': form,

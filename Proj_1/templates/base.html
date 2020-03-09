@@ -65,7 +65,7 @@
                                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                                 </li>
                                 <li class="nav-item">
-                                    Logged in as {{ request.user }} ( {{ request.user.pk }} )
+                                    Logged in as {{ request.user.first_name }} ( {{ request.user.pk }} )
                                 </li>
                                 {% endif %}
 
