@@ -10,6 +10,7 @@ from django.contrib.auth import (
 from django.db.models import Q
 
 from shop.models import ShopGroup
+import logging
 
 class UserLoginForm(forms.Form):
     username = forms.CharField()
@@ -43,6 +44,45 @@ class UserLoginForm(forms.Form):
                     if not user.is_active:
                         raise ValidationError("This user is not active")
         return super(UserLoginForm, self).clean(*args,**kwargs)
+
+
+class UserLoginEmailForm(forms.Form):
+    """
+    User login using email and not username
+    """
+    email = forms.CharField()
+    username = forms.CharField(widget=forms.HiddenInput)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_username(self):
+        # print(self._errors)
+        return 'user_name'
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super(UserLoginEmailForm, self).clean()
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+        if self.errors['username']:
+            del self.errors['username']
+        logging.getLogger("info_logger").info(f'Attempt to login {email}')
+        if email and password:
+            qs = User.objects.filter(email=email).first()
+            if qs:
+                username = qs.username
+                cleaned_data['username'] = username
+                user = authenticate(username=username, password=password)
+                if not user:
+                    logging.getLogger("info_logger").info('password fault')
+                    raise ValidationError("The password is very incorrect")
+                else:
+                    logging.getLogger("info_logger").info('known user')
+                    if not user.is_active:
+                        raise ValidationError("This user is not active")
+            else:
+                logging.getLogger("info_logger").info('unknown user')
+                raise ValidationError('no such email')
+
+        return cleaned_data
 
 
 class UserRegisterForm(forms.ModelForm):

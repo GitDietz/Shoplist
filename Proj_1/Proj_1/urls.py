@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 from accounts.views import (
         login_view,
+        login_email,
         register_view,
         logout_view,
         home_view,
@@ -19,6 +20,7 @@ urlpatterns = [
     # url(r'^accounts/',include('invitation.urls'),
     url(r'^invite/', include("invitation.urls", namespace='invitations')),
     url(r'login/', login_view, name='login'),
+    url(r'login_email/', login_email, name='login_email'),
     url(r'logout/', logout_view, name='logout'),
     url(r'set_group/', set_group, name='set_group'),
     url(r'^shop/', include("shop.urls", namespace='shop')),

@@ -10,7 +10,7 @@ from django.contrib.auth import (
 from django.db.models import Q
 from django.shortcuts import render, redirect
 
-from .forms import UserLoginForm, UserRegisterForm
+from .forms import UserLoginForm, UserRegisterForm, UserLoginEmailForm
 from invitation.models import InvitationKey
 from shop.models import ShopGroup
 
@@ -74,6 +74,40 @@ def login_view(request):
     return render(request, "login_form.html", context=context)
 
 
+def login_email(request):
+    """
+    the view only handles the login and then hands off to invite select or group select views
+    this method uses the email address and not the username
+    """
+    logging.getLogger("info_logger").info(f'entry to view')
+    next = request.GET.get('next')  # this is available when the login required redirected to user to log in
+    form = UserLoginEmailForm(request.POST or None)
+    title = 'Login'
+    if request.method == 'POST' and form.is_valid():
+        logging.getLogger("info_logger").info(f'form submitted')
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        username = form.cleaned_data.get('username')
+        user = authenticate(username=username, password=password)
+
+        if user:
+            login(request, user)
+            logging.getLogger("info_logger").info(f'new user authenticated')
+            has_invites = InvitationKey.objects.key_for_email(user.email)
+            if has_invites:
+                logging.getLogger("info_logger").info(f'divert to invite selection')
+                return redirect('invitations:invite_select_view')
+            else:
+                logging.getLogger("info_logger").info(f'divert to set group')
+                return redirect('set_group')
+    else:
+        print(form.errors)
+
+    context = {'form': form,
+               'title': title}
+    return render(request, "login_form.html", context=context)
+
+
 def set_group(request):
     """ Sets group choice if there is only 1
     divert to select view if more
@@ -110,6 +144,7 @@ def register_view(request):
             # to be valid it was checked to not exist
 
             user = form.save(commit=False)
+            # user.is_active = False # part of email confirmation
             user.username = create_username(user.first_name, user.last_name)
             password = form.cleaned_data.get('password')
             user.set_password(password)
@@ -147,6 +182,7 @@ def register_view(request):
 
 
 def logout_view(request):
+    logging.getLogger("info_logger").info(f'logging out {request.user}')
     logout(request)
     return render(request, "home.html", {})
 

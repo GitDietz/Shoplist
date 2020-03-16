@@ -10,13 +10,12 @@ done - group - list only to show the ones user is member of
 Done - group - existing user to add a new group
 done - Add group option to Menu
 done - shopgroup create ensure that user = memebr=leader=manager
-
+done - add logging account views
 
 document : merchant - who can edit ? anyone
 there must always be at least one leader/member - remove the group if the last one is deleted
 implement register via email confirmation - now its possible to register without confirmation
-add logging
-    account views
+
 
 
 Done - User register form to get first and last Name as mandatory
