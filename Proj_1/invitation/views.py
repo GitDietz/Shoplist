@@ -1,10 +1,14 @@
 from django.conf import settings
 # from django.views.generic.simple import direct_to_template
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from urllib.parse import urlencode
 
 import datetime
@@ -18,10 +22,11 @@ from .email import email_main
 from invitation.models import InvitationKey
 from .forms import InvitationKeyForm
 from shop.models import ShopGroup
+from .token import TokenGenerator
 from Proj_1.utils import in_post
 
 is_key_valid = InvitationKey.objects.is_key_valid
-
+# account_activation_token = TokenGenerator()
 send_result = ''
 
 def create_key():
@@ -151,6 +156,35 @@ def invite(request):
         'form_option': form_option,
     }
     return render(request, template_name, context)
+
+
+@login_required()
+def compile_confirmation(request):
+    """
+    17/3/20 test the generation of the confirmation
+    :param request:
+    :return:
+    in newer django versions >=2.2 remove force_text
+    """
+    byted = force_bytes(request.user.pk)
+    urlstr = urlsafe_base64_encode(byted)
+    strurlstr = force_text(urlstr)
+    token = TokenGenerator()
+    domain = get_current_site(request).domain
+    message = render_to_string('activate_email.html', {
+        'user': request.user,
+        'domain': domain,
+        'uid': strurlstr,
+        'token': token,
+    })
+    pass
+    email_kwargs = {
+                    "uid": strurlstr,
+                    "token": account_activation_token(request.user),
+                    "group_name": 'hoppalongs',
+                    "destination": 'africanmeats@gmail.com',
+                    "subject": "Confirm your registration"}
+    send_result = email_main(False, **email_kwargs)
 
 
 @login_required()

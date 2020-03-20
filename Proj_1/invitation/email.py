@@ -11,7 +11,7 @@ def mail_config_tester():
 
 
 def url_builder(key):
-    return 'http://127.0.0.1:8000/invite/invited/' + key +'/'
+    return 'http://127.0.0.1:8000/invite/invited/' + key + '/'
 
 
 def url_builder_existing_user():
@@ -79,3 +79,7 @@ def email_main(existing_user, **email_kwargs):
     # result will be 0 if success or the body if failed
     return result
 
+
+def email_confirmation(**email_kwargs):
+
+    pass

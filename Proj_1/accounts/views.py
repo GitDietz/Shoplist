@@ -151,7 +151,10 @@ def register_view(request):
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             user.save()
             logging.getLogger("info_logger").info(f'Saved user')
-
+            # temporary break out to test the register/confirm email
+            return redirect('invitations:compile_confirmation')
+            # will have to save the target group to the user?
+            # or make the group inactive until the user creating it is active
             new_group = ShopGroup.objects.create_group(target_group, user)
             new_group.purpose = form.cleaned_data.get('purpose')
             new_group.save()
