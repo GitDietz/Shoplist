@@ -1,0 +1,11 @@
+All identified tasks to complete
+--------------------------------
+
+
+
+
+=========
+Future
+=========
+Make merchant inactive and reactive if added again to a group
+

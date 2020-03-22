@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block head_title %}
-    {{ instance.title }} | {{ block.super }}
+    {{ block.super }} | Edit Item
 {% endblock head_title%}
 {% block content %}
 <div class="col-sm-6 col-sm-offset-3">
@@ -9,22 +9,13 @@
 <h2>Item detail</h2>
     <p>
         Number {{ instance.id }} <br/>
-
         Requested on: {{ instance.date_requested }}<br/>
     <form method='POST' action="" >
         {% csrf_token %}
         {{ form|crispy }} <br/>
         <input type='submit' class="btn btn-secondary" value = 'Submit'>
-
     </form>
-
-    </p><hr/>
-    Request by:
-    {% if instance.requested.get_full_name %}
-        {{ instance.requested.get_full_name }}
-    {% else %}
-        {{ instance.requested.name }}
-    {% endif %}
+    </p>
     <hr/>
     {% if form.errors %}
      {% for field in form %}

@@ -3,19 +3,28 @@
 {% block content %}
 
 <h1>{{ title }}</h1>
-<a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
+
 <p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
+<form method="POST" action="." >{% csrf_token %}
+    {{ form|crispy }}
+    Active list = {{ active_list }}
+    {% if user_lists > 1 %}
+        <a href="{% url 'shop:group_select' %}" class="top-menu"><i class="far fa-random" title="Switch to other list"></i></a>
+    {% endif %}<br>
+<a href="{% url 'shop:shop_create' %}" class="top-menu">Add item</a><br>
 {% if object_list%}
 
-    {% for obj in object_list %}
-    <form method="POST" action="." >{% csrf_token %}
-        {{ form|crispy }}
-        <div class="row p-1 mb-2 bg-light text-dark">
-            <div class="col-md-8 col-xs-8">{{ obj.id }}. {{ obj.description }}{%if obj.to_get_from != None %}
-                <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}</span> {% endif %}
-            </div>
-            <div class="col-md-4 col-xs-4">
-                {% if request.user.is_staff %}
+{% for obj in object_list %}
+    <div class="row p-1 mb-2 bg-light text-dark">
+        <div class="col-md-8 col-xs-8">{{ obj.name_qty }}
+
+            {% if obj.to_get_from != None %}
+            <span class="text-info font-weight-light"> @ {{ obj.to_get_from }}
+            {% if obj.in_group != None %}{% endif %}
+            </span> {% endif %}
+        </div>
+        <div class="col-md-4 col-xs-4">
+            {% if request.user == obj.requested or is_leader %}
 <!--                    <input type="submit" name="got_item|{{ obj.id }}" value="Purchased" class="btn btn-success btn-sm">-->
 <!--                    <input type="submit" name="cancel_item|{{ obj.id }}" value="Cancel" class="btn btn-outline-danger btn-sm">-->
                 <button type="submit" name="got_item|{{ obj.id }}" class="btn btn-success btn-sm">
@@ -25,17 +34,17 @@
                     <i class="far fa-trash-alt glyph"></i>
                 </button>
                 <a href="{% url 'shop:shop_edit' pk=obj.pk %}"><i class="far fa-edit"></i></a>
-                {% endif %}
-                <small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>
-            </div>
+            {% endif %}
+            <!--<small>{{ obj.date_requested | date:"d M"}} ({{ obj.requested.username }})</small>-->
+            <span style="font-size:1.2vw;">{{ obj.date_requested | date:"d M"}} ({{ obj.requested.first_name }})</span>
         </div>
-    </form>
-    {% endfor %}
+    </div>
+{% endfor %}
 
 {% else %}
     <p>No list yet!</p>
 {% endif %}
-
+</form>
     <!--
     <div class="pagination">
     <span class="step-links">

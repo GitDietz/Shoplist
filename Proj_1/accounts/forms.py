@@ -7,6 +7,10 @@ from django.contrib.auth import (
     login,
     logout,
     )
+from django.db.models import Q
+
+from shop.models import ShopGroup
+import logging
 
 class UserLoginForm(forms.Form):
     username = forms.CharField()
@@ -42,22 +46,71 @@ class UserLoginForm(forms.Form):
         return super(UserLoginForm, self).clean(*args,**kwargs)
 
 
-class UserRegisterForm(forms.ModelForm):
-    email = forms.EmailField(label='Email Address') # overrides the default
-    email2 = forms.EmailField(label='Confirm Email')
+class UserLoginEmailForm(forms.Form):
+    """
+    User login using email and not username
+    """
+    email = forms.CharField()
+    username = forms.CharField(widget=forms.HiddenInput)
     password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_username(self):
+        # print(self._errors)
+        return 'user_name'
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super(UserLoginEmailForm, self).clean()
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+        if self.errors['username']:
+            del self.errors['username']
+        logging.getLogger("info_logger").info(f'Attempt to login {email}')
+        if email and password:
+            qs = User.objects.filter(email=email).first()
+            if qs:
+                username = qs.username
+                cleaned_data['username'] = username
+                user = authenticate(username=username, password=password)
+                if not user:
+                    logging.getLogger("info_logger").info('password fault')
+                    raise ValidationError("The password is very incorrect")
+                else:
+                    logging.getLogger("info_logger").info('known user')
+                    if not user.is_active:
+                        raise ValidationError("This user is not active")
+            else:
+                logging.getLogger("info_logger").info('unknown user')
+                raise ValidationError('no such email')
+
+        return cleaned_data
+
+
+class UserRegisterForm(forms.ModelForm):
+    email = forms.EmailField(label='Email Address', required=True) # overrides the default
+    email2 = forms.EmailField(label='Confirm Email')
+    first_name = forms.CharField(label='First Name (will display for others)', required=True)
+    last_name = forms.CharField(label='Last Name', required=True)
+    password = forms.CharField(widget=forms.PasswordInput)
+    joining = forms.CharField(label='Group to create', max_length=100)
+    purpose = forms.CharField(label='What is this group for?', max_length=200)
+
     class Meta:
         model = User
         fields = [
-            'username',
+            # 'username',
             'email',
             'email2',
-            'password'
+            'first_name',
+            'last_name',
+            'password',
+            'joining',
+            'purpose'
         ]
+        # widgets = {'username': forms.HiddenInput()}
+        # initial = {'username': 'user1'}
     #possible to use a form level clean similar to the class above - validation will then show on the form itself and not the field
 
     def clean_email2(self): #this is 2 so it runs off the email2 field
-        print(self.cleaned_data)
         email = self.cleaned_data.get('email')
         email2 = self.cleaned_data.get('email2')
         print(f'first is {email}, second is {email2}')
@@ -66,6 +119,32 @@ class UserRegisterForm(forms.ModelForm):
 
         email_qs = User.objects.filter(email=email)
         if email_qs.exists():
-            raise ValidationError('Emails already exists, please enter another one')
+            raise ValidationError('Emails already exists for a user, please enter another one')
 
-        return super(UserRegisterForm, self).clean()
+        # return super(UserRegisterForm, self).clean()
+        return email2
+
+
+    def clean_joining(self):
+        target_group = self.cleaned_data.get('joining')
+        # now check that the group does not exists and create it, rather do this in the form
+        qs_shop_group = ShopGroup.objects.all()
+        this_found = qs_shop_group.filter(Q(name__iexact=target_group))
+        if this_found.exists():
+            raise ValidationError('That group already exists, please enter another name')
+
+        # return super(UserRegisterForm, self).clean()
+        return target_group
+
+
+    # def clean_username(self):
+    #     uname = self.cleaned_data.get('username')
+    #     print('in the username clean')
+    #     last_name = self.cleaned_data.get('first_name')
+    #     new_username = self.cleaned_data.get('first_name') + min(last_name[:2],'')
+    #     this_user = User.objects.all().filter(Q(username__iexact=new_username))
+    #     i=1
+    #     while this_user.exists():
+    #         this_user + str(i)
+    #         i+=1
+    #     return new_username

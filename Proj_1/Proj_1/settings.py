@@ -1,19 +1,29 @@
 import os
+import logging.config
+from decouple import config
+from django.utils.log import DEFAULT_LOGGING
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# reading config variables
+EMAIL_KEY = config('MAIL_API_KEY') # no default or cast used
+EMAIL_FROM = config('MAIL_SENDER')
+
+
+# DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zmenzhj#q459=!^r4yt_0mmg7t7ob9tbob9hvzsips6jo0_%1-'
+SECRET_KEY = config('NEW_SK')
+PASSWORD_RESET_TIMEOUT = 600
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # For prod set back to False
-#ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
+# ALLOWED_HOSTS = ['getafix.pythonanywhere.com']
 # for PROD activate this again
 ALLOWED_HOSTS = []
 
@@ -27,15 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #third party
+    'django.contrib.sites',
+    # third party
     'crispy_forms',
     'markdown_deux',
     'pagedown',
-    #local apps
-    #'comments',
+    # local apps
+    # 'comments',
     'shop',
-    #'work_posts'
+    'invitation',
+    # 'work_posts'
 ]
+
+SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -63,7 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
@@ -101,6 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -128,12 +143,27 @@ STATICFILES_DIRS = [
     #'/var/www/static/', hardcoded method not used
 ]
 
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_cdn")
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn")
 # os.path.dirname gets the  directory name one level up
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"media_cdn")
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media_cdn")
 # user uploaded docs
 
 
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+ACCOUNT_ACTIVATION_DAYS = 7
+ACCOUNT_INVITATION_DAYS = 7
+INVITATIONS_PER_USER = 7
+INVITE_MODE = True
+REGISTRATIONS = True # allow registrations to take place
+
+# LOGGING CONFIG
+LOG_ROOT = os.path.join(BASE_DIR, 'Logs')
+# importing logger settings
+try:
+    from .logger_settings import *
+except Exception as e:
+    # in case of any error, pass silently.
+    pass

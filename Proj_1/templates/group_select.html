@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1>{{ title }}</h1>
+<p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
+<form method="POST" action="." >{% csrf_token %}
+
+{% if list_choices %}
+    {% for item in list_choices%}
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-6 col-xs-6">{{ item.name }}<br>
+            <span style="font-size:1.2vw;">{{ item.info }} </span></div>
+
+            <div class="col-md-2 col-xs-2">
+            <button type="submit" name="pick_item|{{ item.id }}" class="btn btn-success btn-sm">
+                <i class="far fa-check-circle"></i>
+            </button></div>
+        </div>
+    {% endfor %}
+
+{% endif %}
+</form>
+{% endblock content %}

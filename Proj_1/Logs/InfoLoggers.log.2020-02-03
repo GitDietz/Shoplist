@@ -1,0 +1,32 @@
+2020-02-03 20:02:11,522  INFO [views-shop_create] view entered | user = James
+2020-02-03 20:02:11,524  INFO [views-get_user_list_property] get multiple properties | user = James
+2020-02-03 20:02:11,526  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:02:11,538  INFO [views-get_user_list_property] active list is Crazyshoppers
+2020-02-03 20:02:29,926  INFO [views-shop_create] view entered | user = James
+2020-02-03 20:02:29,926  INFO [views-get_user_list_property] get multiple properties | user = James
+2020-02-03 20:02:29,927  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:02:29,930  INFO [views-get_user_list_property] active list is Crazyshoppers
+2020-02-03 20:02:29,931  INFO [views-shop_create] form valid | user = James
+2020-02-03 20:02:29,937  INFO [views-shop_create] item will be added | user = James
+2020-02-03 20:02:29,937  INFO [views-shop_create] item saving for vendor = None
+2020-02-03 20:02:29,956  INFO [views-shop_list] view entry | user = James
+2020-02-03 20:02:29,956  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:02:29,959  INFO [views-shop_list] active list is Crazyshoppers | user = James
+2020-02-03 20:02:29,959  INFO [views-is_user_leader] user = James
+2020-02-03 20:02:29,962  INFO [views-is_user_leader]  user is not leader
+2020-02-03 20:03:21,401  INFO [views-shop_create] view entered | user = James
+2020-02-03 20:03:21,401  INFO [views-get_user_list_property] get multiple properties | user = James
+2020-02-03 20:03:21,402  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:03:21,405  INFO [views-get_user_list_property] active list is Crazyshoppers
+2020-02-03 20:03:28,810  INFO [views-shop_create] view entered | user = James
+2020-02-03 20:03:28,810  INFO [views-get_user_list_property] get multiple properties | user = James
+2020-02-03 20:03:28,811  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:03:28,813  INFO [views-get_user_list_property] active list is Crazyshoppers
+2020-02-03 20:03:28,814  INFO [views-shop_create] form valid | user = James
+2020-02-03 20:03:28,819  INFO [views-shop_create] item will be added | user = James
+2020-02-03 20:03:28,820  INFO [views-shop_create] item saving for vendor = None
+2020-02-03 20:03:28,841  INFO [views-shop_list] view entry | user = James
+2020-02-03 20:03:28,842  INFO [views-get_session_list_choice] get session choice
+2020-02-03 20:03:28,845  INFO [views-shop_list] active list is Crazyshoppers | user = James
+2020-02-03 20:03:28,845  INFO [views-is_user_leader] user = James
+2020-02-03 20:03:28,847  INFO [views-is_user_leader]  user is not leader

@@ -55,6 +55,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+Logs/
 
 # Any DBs
 db.sqlite3
@@ -123,5 +124,8 @@ dmypy.json
 .idea/*
 .idea/workspace.xml
 
-#Dev stuuf
+#Dev stuff
 DevNotes.txt
+
+# Ini files for settings
+settings.ini

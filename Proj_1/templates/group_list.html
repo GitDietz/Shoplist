@@ -5,21 +5,39 @@
 <h1>{{ title }}</h1>
 <a href="{% url 'shop:group_create' %}" class="top-menu">Add Group</a><br>
 <p class="font-italic">{% if notice %}{{ notice }}{% endif %}</p>
-{% if object_list%}
+{% if member_list or managed_list %}
+ <form method="POST" action="." >
+     {% csrf_token %}
+    {{ form|crispy }}
+     Groups you are a Member of
+    {% for obj in member_list %}
 
-    {% for obj in object_list %}
-    <form method="POST" action="." >{% csrf_token %}
-        {{ form|crispy }}
         <div class="row p-1 mb-2 bg-light text-dark">
             <div class="col-md-8 col-xs-8">
                 {{ obj.name }} ({{ obj.id }})</div>
             <div class="col-md-4 col-xs-4">
-            <small><a href="{% url 'shop:merchant_update' pk=obj.pk %}"><i class="far fa-edit"></i></a>
-                <a href="{% url 'shop:merchant_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a>
+                {# still need to change to url etc to process removing this user from the group#}
+            <small><a onclick="return confirm_action('Are you sure you want to be removed from the group?')"
+                      href="{% url 'shop:group_remove_self' pk=obj.pk %}"><i class="far fa-sign-out-alt"></i></a>
+               <!-- <a href="{% url 'shop:group_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a> -->
                 From {{ obj.date_added | date:"d M"}} </small></div>
         </div>
-    </form>
+
     {% endfor %}
+     {% if managed_list %}Groups you are a Manager for {% endif %}
+     {% for obj in managed_list %}
+
+        <div class="row p-1 mb-2 bg-light text-dark">
+            <div class="col-md-8 col-xs-8">
+                {{ obj.name }} ({{ obj.id }})</div>
+            <div class="col-md-4 col-xs-4">
+            <small><a href="{% url 'shop:group_maintenance' pk=obj.pk %}"><i class="far fa-edit"></i></a>
+                <a href="{% url 'shop:group_delete' pk=obj.pk %}"><i class="far fa-trash-alt"></i></a>
+                From {{ obj.date_added | date:"d M"}} </small></div>
+        </div>
+
+    {% endfor %}
+</form>
 
 {% else %}
     <p>No list yet!</p>
@@ -42,5 +60,15 @@
     </span>
     </div>
 -->
+<script type="text/javascript">
 
+function confirm_action(in_message) {
+  var res = confirm(in_message);
+    if (res) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
 {% endblock content %}

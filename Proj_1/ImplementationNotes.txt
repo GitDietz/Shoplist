@@ -160,3 +160,5 @@ Resolve conflicts
 Push changes to remote
 Make migrations
 Run migrations
+------------------------------------------
+Python 3.7 (Shoplist) ~/Documents/Workspace/VMs/Shoplist/bin/python

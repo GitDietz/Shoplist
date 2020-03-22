@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block content %}
+
+<h2>{% trans "Invite a friend" %}</h2>
+
+{% if form_option == 'refer' %}
+<p>{% trans "You are not the group manager and unable to send invitations." %}</p>
+Please contact the group manager to extend the invitation<br>
+<a href="{% url 'shop:shop_list' %}">Return to your list</a>
+
+{% else %}
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+
+<input type="submit" value="{% trans "Send Invitation" %}" />
+</form>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if mail_body %}
+    <h2>{# "Invitation sent" #}</h2>
+    <div>{{ mail_body | safe}}</div>
+    <br>
+{% endif %}
+<a href="{% url 'shop:shop_list' %}">Back to the List</a>
+{% endblock %}

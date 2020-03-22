@@ -1,0 +1,78 @@
+2020-02-05 16:52:41,439  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 16:52:41,439  INFO [views-invite] Outside Post section
+2020-02-05 16:52:55,955  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 16:52:55,955  INFO [views-invite] Post section | user={request.user}
+2020-02-05 16:52:55,970  INFO [views-create_key] created key is 4748d5a592e8145333bb54b7ecbf3fd43af4c64e
+2020-02-05 16:52:55,970  INFO [views-invite] going to save invitation key
+2020-02-05 16:52:55,976  INFO [views-invite] email send failed
+2020-02-05 16:55:01,851  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 16:55:01,851  INFO [views-invite] Post section | user={request.user}
+2020-02-05 16:55:01,860  INFO [views-create_key] created key is 630d78c4f113917bfa258625775ddde2ffaa3d2e
+2020-02-05 16:55:01,861  INFO [views-invite] going to save invitation key
+2020-02-05 16:55:01,864  INFO [views-invite] email send failed
+2020-02-05 16:55:06,010  INFO [views-complete] Invite Complete|parameter = None 
+2020-02-05 16:56:20,207  INFO [views-complete] Invite Complete|parameter = None 
+2020-02-05 16:56:58,480  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 16:56:58,480  INFO [views-invite] Post section | user={request.user}
+2020-02-05 16:56:58,483  INFO [views-create_key] created key is 44fc3dfabe570a037658264eb2edc4d78943d431
+2020-02-05 16:56:58,483  INFO [views-invite] going to save invitation key
+2020-02-05 16:56:58,488  INFO [views-invite] email send failed
+2020-02-05 16:58:17,610  INFO [views-complete] Invite Complete|parameter = None 
+2020-02-05 16:58:36,700  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 16:58:36,700  INFO [views-invite] Post section | user={request.user}
+2020-02-05 16:58:36,704  INFO [views-create_key] created key is 2d2a5d2666f691e0b6f51a1e79394dc9768777b5
+2020-02-05 16:58:36,704  INFO [views-invite] going to save invitation key
+2020-02-05 16:58:36,708  INFO [views-invite] email send failed
+2020-02-05 16:59:20,767  INFO [views-complete] Invite Complete|parameter = None 
+2020-02-05 17:00:37,023  INFO [views-complete] Invite Complete|parameter = None 
+2020-02-05 17:04:40,875  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:04:40,876  INFO [views-invite] Outside Post section
+2020-02-05 17:04:55,178  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:04:55,179  INFO [views-invite] Post section | user={request.user}
+2020-02-05 17:04:55,187  INFO [views-create_key] created key is 7d16b2b6594eb7967c332c065a8ee3b5b1015b6e
+2020-02-05 17:04:55,187  INFO [views-invite] going to save invitation key
+2020-02-05 17:04:55,192  INFO [views-invite] email send failed
+2020-02-05 17:05:12,646  INFO [views-complete] Invite Complete|parameter = Dear joo, James invites you to become a member of the group "Makadams" <br>To do this, click on the link below<br>http://127.0.0.1:8000/invite/invited/7d16b2b6594eb7967c332c065a8ee3b5b1015b6e/<br>We hope to see you soon!<br>From the team at YourList 
+2020-02-05 17:07:11,049  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:07:11,049  INFO [views-invite] Outside Post section
+2020-02-05 17:07:24,664  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:07:24,664  INFO [views-invite] Post section | user={request.user}
+2020-02-05 17:07:24,673  INFO [views-create_key] created key is 2933956707f51d045dff7eb5cef7c5773e310537
+2020-02-05 17:07:24,673  INFO [views-invite] going to save invitation key
+2020-02-05 17:07:24,679  INFO [views-invite] email send failed
+2020-02-05 17:07:38,108  INFO [views-complete] Invite Complete|parameter = Dear hac, James invites you to become a member of the group "Makadams" <br>To do this, click on the link below<br>http://127.0.0.1:8000/invite/invited/2933956707f51d045dff7eb5cef7c5773e310537/<br>We hope to see you soon!<br>From the team at YourList 
+2020-02-05 17:08:45,048  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:08:45,048  INFO [views-invite] Outside Post section
+2020-02-05 17:08:56,429  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:08:56,429  INFO [views-invite] Post section | user={request.user}
+2020-02-05 17:08:56,432  INFO [views-create_key] created key is b2f936837ce87ee8246f4b69a2f869162aafd6a1
+2020-02-05 17:08:56,432  INFO [views-invite] going to save invitation key
+2020-02-05 17:08:56,436  INFO [views-invite] email send failed
+2020-02-05 17:09:03,587  INFO [views-complete] Invite Complete|parameter = Dear jii, James invites you to become a member of the group "Makadams" <br>To do this, click on the link below<br>http://127.0.0.1:8000/invite/invited/b2f936837ce87ee8246f4b69a2f869162aafd6a1/<br>We hope to see you soon!<br>From the team at YourList 
+2020-02-05 17:11:11,080  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:11:11,080  INFO [views-invite] Post section | user={request.user}
+2020-02-05 17:11:11,082  INFO [views-create_key] created key is 9c5efdc538926964557852d6d61c352ca7992bc5
+2020-02-05 17:11:11,083  INFO [views-invite] going to save invitation key
+2020-02-05 17:11:11,086  INFO [views-invite] email send failed
+2020-02-05 17:11:16,776  INFO [views-complete] Invite Complete|parameter = Dear jii, James invites you to become a member of the group "Makadams" <br>To do this, click on the link below<br>http://127.0.0.1:8000/invite/invited/9c5efdc538926964557852d6d61c352ca7992bc5/<br>We hope to see you soon!<br>From the team at YourList 
+2020-02-05 17:14:45,560  INFO [views-invite] can select from [<ShopGroup: Makadams>]
+2020-02-05 17:14:45,560  INFO [views-invite] Post section | user={request.user}
+2020-02-05 17:14:45,563  INFO [views-create_key] created key is 19c65d2195be868d07dc9710d7ac23a47017a5ed
+2020-02-05 17:14:45,563  INFO [views-invite] going to save invitation key
+2020-02-05 17:14:45,568  INFO [views-invite] email send failed
+2020-02-05 17:14:49,575  INFO [views-complete] Invite Complete|parameter = Dear jii, James invites you to become a member of the group "Makadams" <br>To do this, click on the link below<br>http://127.0.0.1:8000/invite/invited/19c65d2195be868d07dc9710d7ac23a47017a5ed/<br>We hope to see you soon!<br>From the team at YourList 
+2020-02-05 17:29:49,199  INFO [views-shop_list] view entry | user = James
+2020-02-05 17:29:49,199  INFO [views-get_session_list_choice] get session choice
+2020-02-05 17:29:49,200  INFO [views-shop_list] active list is Crazyshoppers | user = James
+2020-02-05 17:29:49,200  INFO [views-is_user_leader] user = James
+2020-02-05 17:29:49,201  INFO [views-is_user_leader]  user is not leader
+2020-02-05 17:30:11,600  INFO [views-shop_list] view entry | user = James
+2020-02-05 17:30:11,601  INFO [views-get_session_list_choice] get session choice
+2020-02-05 17:30:11,603  INFO [views-shop_list] active list is Crazyshoppers | user = James
+2020-02-05 17:30:11,603  INFO [views-is_user_leader] user = James
+2020-02-05 17:30:11,605  INFO [views-is_user_leader]  user is not leader
+2020-02-05 17:30:12,718  INFO [views-shop_list] view entry | user = James
+2020-02-05 17:30:12,719  INFO [views-get_session_list_choice] get session choice
+2020-02-05 17:30:12,720  INFO [views-shop_list] active list is Crazyshoppers | user = James
+2020-02-05 17:30:12,720  INFO [views-is_user_leader] user = James
+2020-02-05 17:30:12,721  INFO [views-is_user_leader]  user is not leader

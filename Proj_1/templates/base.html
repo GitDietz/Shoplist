@@ -8,7 +8,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- -->
     <script src="https://kit.fontawesome.com/1f8531230c.js" crossorigin="anonymous"></script>
-    <title>{% block head_title %}Our Posting{% endblock head_title%}</title>
+    <title>{% block head_title %}My List{% endblock head_title%}</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href='{% static "css/base.css" %}'/>
     <!--this link method is subject to the directory name not changing
@@ -29,7 +29,7 @@
 
         {% include "messages_display.html" %}
         <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #8C8687;">
-            <a class="navbar-brand" href="#">Shopping List</a>
+            <a class="navbar-brand" href="#">My List</a>
                     <div class="container">
                         <nav aria-label="breadcrumb">
                             <ul class="nav nav-pills nav-fill">
@@ -48,13 +48,24 @@
                                     <a class="nav-link" href="{% url 'shop:shop_list' %}">List</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'shop:merchant_list' %}">Merchants</a>
+                                    <a class="nav-link" href="{% url 'invitations:invitation_invite' %}">Invite</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'shop:group_list' %}">Groups</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'shop:merchant_list' %}">Merchants</a>
+                                </li>
+                                {% if request.user.is_staff %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'shop:group_list' %}">Groups</a>
+                                </li>
+                                {% endif %}
+                                <li class="nav-item">
                                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                                </li>
+                                <li class="nav-item">
+                                    Logged in as {{ request.user.first_name }} ( {{ request.user.pk }} )
                                 </li>
                                 {% endif %}
 
@@ -95,7 +106,6 @@
                 // i don't actually use it due to the card deck
                 //$(this).addClass("img-responsive")
             })
-
 
         })
     </script>
