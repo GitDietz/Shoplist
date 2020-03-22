@@ -1,6 +1,6 @@
 import os
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models.functions import Lower
 from django.conf import settings
@@ -69,7 +69,7 @@ class ShopGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
     purpose = models.CharField(max_length=200, blank=False)
     date_added = models.DateTimeField(auto_now=False, auto_now_add=True)
-    manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by')
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='manage_by', on_delete=models.CASCADE)
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='member_of')
     leaders = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='leader_of')
     disabled = models.BooleanField(default=False)
@@ -93,7 +93,7 @@ class ShopGroup(models.Model):
 class Merchant(models.Model):
     name = models.CharField(max_length=50, unique=False, blank=False)
     date_added = models.DateField(auto_now=False, auto_now_add=True)
-    for_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=None)
+    for_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=models.CASCADE)
     objects = MerchantManager()
 
     class Meta:
@@ -106,15 +106,15 @@ class Merchant(models.Model):
 
 
 class Item(models.Model):
-    requested = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='req_by')
-    purchased = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='buy_by')
-    cancelled = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='cancel_by')
+    requested = models.ForeignKey(settings.AUTH_USER_MODEL, default=1, related_name='req_by', on_delete=models.CASCADE)
+    purchased = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='buy_by', on_delete=models.CASCADE)
+    cancelled = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='cancel_by', on_delete=models.CASCADE)
     description = models.CharField(max_length=100)
     quantity = models.CharField(max_length=30, blank=True, null=True, default='1')
     date_requested = models.DateField(auto_now=False, auto_now_add=True)
     date_purchased = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
-    to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=None)
-    in_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=None)
+    to_get_from = models.ForeignKey(Merchant, blank=True, null=True, on_delete=models.CASCADE)
+    in_group = models.ForeignKey(ShopGroup, blank=False, null=False, on_delete=models.CASCADE)
     # updated 1/1/20 blank=True, null=True,
     objects = ItemManager()
 

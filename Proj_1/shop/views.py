@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import DatabaseError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, redirect

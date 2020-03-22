@@ -57,8 +57,8 @@ class InvitationKeyManager(models.Manager):
 class InvitationKey(models.Model):
     key = models.CharField(_('invitation key'), max_length=40)
     date_invited = models.DateField(_('date invited'), default=datetime.date.today)
-    from_user = models.ForeignKey(User, related_name='invitations_sent')
-    registrant = models.ForeignKey(User, null=True, blank=True, related_name='invitations_used')
+    from_user = models.ForeignKey(User, related_name='invitations_sent', on_delete=models.CASCADE)
+    registrant = models.ForeignKey(User, null=True, blank=True, related_name='invitations_used', on_delete=models.CASCADE)
     invite_to_group = models.ForeignKey(ShopGroup, on_delete=models.CASCADE)
     invited_email = models.EmailField(null=False, blank=False)
     invite_used = models.BooleanField(null=False, default=False)

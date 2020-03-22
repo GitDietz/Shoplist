@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text

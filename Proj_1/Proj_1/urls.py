@@ -15,11 +15,11 @@ from accounts.views import (
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^invite/', include("invitation.urls", namespace='invitations')),
+    url(r'^invite/', include(("invitation.urls",'invitation'), namespace='invitations')),
     url(r'login/', login_email, name='login'),
     url(r'logout/', logout_view, name='logout'),
     url(r'set_group/', set_group, name='set_group'),
-    url(r'^shop/', include("shop.urls", namespace='shop')),
+    url(r'^shop/', include(("shop.urls",'shop'), namespace='shop')),
     url(r'register/', register_view, name='register'),
     url(r'^', home_view, name='home'),
     ]

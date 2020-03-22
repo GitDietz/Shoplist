@@ -59,10 +59,13 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+]
 
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E408','admin.E409','admin.E410',
 ]
 
 ROOT_URLCONF = 'Proj_1.urls'
@@ -86,19 +89,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Proj_1.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db2.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db3.sqlite3'),
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -117,8 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -130,9 +126,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 LOGIN_URL = '/login/'
 STATIC_URL = '/static/'
