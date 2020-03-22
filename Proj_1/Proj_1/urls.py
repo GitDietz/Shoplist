@@ -14,19 +14,13 @@ from accounts.views import (
 # complaining about the absolute import
 
 urlpatterns = [
-
     url(r'^admin/', admin.site.urls),
-    # this is the future register view: url(r'register/',register_view, name='register'),
-    # url(r'^accounts/',include('invitation.urls'),
     url(r'^invite/', include("invitation.urls", namespace='invitations')),
-    # url(r'login/', login_view, name='login'),
     url(r'login/', login_email, name='login'),
     url(r'logout/', logout_view, name='logout'),
     url(r'set_group/', set_group, name='set_group'),
     url(r'^shop/', include("shop.urls", namespace='shop')),
-    # url(r'shop/merchant',merchant_list),
     url(r'register/', register_view, name='register'),
-    # url(r'register_new/', register_view, name='register_new'), obsolete
     url(r'^', home_view, name='home'),
     ]
 
@@ -35,8 +29,4 @@ if settings.DEBUG:      # ensures that this will only be done in DEV
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-# urlpatterns += [
-#     url(r'robot/', include('work_posts.robot_urls')),
-#
-#     ]
 

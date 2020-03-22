@@ -17,7 +17,8 @@ EMAIL_FROM = config('MAIL_SENDER')
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zmenzhj#q459=!^r4yt_0mmg7t7ob9tbob9hvzsips6jo0_%1-'
+SECRET_KEY = config('NEW_SK')
+PASSWORD_RESET_TIMEOUT = 600
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -114,6 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/

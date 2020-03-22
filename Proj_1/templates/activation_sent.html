@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if content_body %}
+    <h2>{# "Confirmation email sent" #}</h2>
+    <div>{{ content_body | safe}}</div>
+    <br>
+{% endif %}
+<a href="{% url 'home' %}">Back to Home page</a>
+{% endblock %}

@@ -1,33 +1,35 @@
+# # DJANGO IMPORTS
 from django.conf import settings
 # from django.views.generic.simple import direct_to_template
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.sessions.models import Session
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from urllib.parse import urlencode
 
+# # GLOBAL IMPORTS
 import datetime
 import logging
 import uuid
 from hashlib import sha1 as sha_constructor
-# from registration.views import register as registration_register
-# from registration.forms import RegistrationForm
 
-from .email import email_main
+# # LOCAL IMPORTS
+from .email import email_main, url_builder_confirmation, email_confirmation
 from invitation.models import InvitationKey
 from .forms import InvitationKeyForm
 from shop.models import ShopGroup
-from .token import TokenGenerator
+from .token import account_activation_token
 from Proj_1.utils import in_post
 
 is_key_valid = InvitationKey.objects.is_key_valid
-# account_activation_token = TokenGenerator()
 send_result = ''
+
 
 def create_key():
     salt = uuid.uuid4().hex
@@ -35,13 +37,13 @@ def create_key():
     logging.getLogger("info_logger").info(f'created key is {key}')
     return key
 
+
 def is_existing_user(email):
     if User.objects.filter(email=email).exists():
         return True
     else:
         return False
 
-# TODO: move the authorization control to a dedicated decorator
 
 class InvitationUsedCallback(object):
     """
@@ -62,23 +64,93 @@ class InvitationUsedCallback(object):
             self.profile_callback(user)
 
 
-def invited(request, key=None, extra_context=None):
-    '''
-    The view when the user clicks on the link in the email
-    if no valid invite key divert to the registration view
-    '''
-    if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
-        logging.getLogger("info_logger").info('Able to invite')
-        if key and is_key_valid(key):
-            template_name = 'invitation/invited.html'
-            logging.getLogger("info_logger").info("Valid key")
-        else:
-            template_name = 'invitation/wrong_invitation_key.html'
-        extra_context = extra_context is not None and extra_context.copy() or {}
-        extra_context.update({'invitation_key': key})
-        return None
+def account_activation_sent(request):
+    content_body = ('<p>Thank you for registering!<br>'
+                   'To complete the process, check your mailbox for an email from us, then '
+                    '<br> Click on the link that will bring you back to the site to do so<br><br>'
+                    'See you soon ....</p>')
+    context = {'title': 'Sent email',
+               'content_body': content_body}
+    return render(request, 'activation_sent.html', context)
+
+
+def activate(request, uidb64, token, group):
+    try:
+        logging.getLogger("info_logger").info(f'new user url decode start')
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        new_user = User.objects.get(pk=uid)
+        group_id = force_text(urlsafe_base64_decode(group))
+        new_group = ShopGroup.objects.get(pk=group_id)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        logging.getLogger("info_logger").info(f'user decode failed')
+        new_user = None
+
+    if new_user is not None and account_activation_token.check_token(new_user, token):
+        logging.getLogger("info_logger").info(f'update user and group')
+        new_user.is_active = True
+        new_user.save()
+        login(request, new_user)
+        uname = new_user.username
+        pword = new_user.password #this create a problem due to the hashing of the password and compar pw hashes it before comparison!
+        Session.objects.all().delete() # try to clear the session before loggin in again
+        # user = authenticate(username=new_user.username, password=new_user.password)
+        user = authenticate(username=uname, password=pword)
+        # login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        login(request, user)
+        new_group.disabled = False
+        new_group.save()
+        new_group.members.add(user)
+        new_group.leaders.add(user)
+        # activate the group and set the properties required
+
+        request.session['list'] = new_group.id
+        logging.getLogger("info_logger").info(f'user list set in session')
+        return redirect('set_group')
     else:
-        return HttpResponseRedirect(reverse('registration_register'))
+        return render(request, 'activation_invalid.html')
+
+
+
+def compile_confirmation(request, group_id, group_name):
+    """
+    17/3/20 test the generation of the confirmation
+    20/3 now part of another view - remove
+    :param request:
+    :return:
+    in newer django versions >=2.2 remove force_text
+    """
+    coded_user = force_text(urlsafe_base64_encode(force_bytes(request.user.pk)))
+    coded_group = force_text(urlsafe_base64_encode(force_bytes(group_id)))
+    token = account_activation_token.make_token(request.user)
+    domain = get_current_site(request)
+    # message = render_to_string('activation_invalid.html', {
+    #     'user': request.user,
+    #     'domain': domain,
+    #     'uid': strurlstr,
+    #     'token': token,
+    # })
+    # url = url_builder_confirmation(coded_user, token)
+    email_kwargs = {"user": request.user.first_name,
+                    "coded_user": coded_user,
+                    'coded_group': coded_group,
+                    "token": token,
+                    "group_name": group_name,
+                    "destination": request.user.email,
+                    "subject": "Confirm your registration"}
+    send_result = email_confirmation(request.user.pk, **email_kwargs)
+    return redirect('invitations:account_activation_sent')
+
+
+@login_required()
+def complete(request):
+    template_name = 'invitation_complete.html'
+    mail_body = request.GET.get('send_result')
+    logging.getLogger("info_logger").info(f'Invite Complete|parameter = {mail_body} ')
+    context = {
+        'title': 'Sent invite',
+        'mail_body': mail_body}
+
+    return render(request, template_name, context)
 
 
 @login_required()
@@ -158,59 +230,23 @@ def invite(request):
     return render(request, template_name, context)
 
 
-@login_required()
-def compile_confirmation(request):
-    """
-    17/3/20 test the generation of the confirmation
-    :param request:
-    :return:
-    in newer django versions >=2.2 remove force_text
-    """
-    byted = force_bytes(request.user.pk)
-    urlstr = urlsafe_base64_encode(byted)
-    strurlstr = force_text(urlstr)
-    token = TokenGenerator()
-    domain = get_current_site(request).domain
-    message = render_to_string('activate_email.html', {
-        'user': request.user,
-        'domain': domain,
-        'uid': strurlstr,
-        'token': token,
-    })
-    pass
-    email_kwargs = {
-                    "uid": strurlstr,
-                    "token": account_activation_token(request.user),
-                    "group_name": 'hoppalongs',
-                    "destination": 'africanmeats@gmail.com',
-                    "subject": "Confirm your registration"}
-    send_result = email_main(False, **email_kwargs)
-
-
-@login_required()
-def complete(request):
-    template_name = 'invitation_complete.html'
-    mail_body = request.GET.get('send_result')
-    logging.getLogger("info_logger").info(f'Invite Complete|parameter = {mail_body} ')
-    context = {
-        'title': 'Sent invite',
-        'mail_body': mail_body}
-
-    return render(request, template_name, context)
-
-
-@login_required()
-def simple(request):
-    # just to test the delivery of  a safe string to the browser
-    template_name = 'invitation_complete.html'
-    mail_body = ('The person you invited is already a member on the site<br>'
-                 'Next time they log on, they will be able to join the group')
-
-    context = {
-        'title': 'Sent invite',
-        'mail_body': mail_body}
-
-    return render(request, template_name, context)
+def invited(request, key=None, extra_context=None):
+    '''
+    The view when the user clicks on the link in the email
+    if no valid invite key divert to the registration view
+    '''
+    if 'INVITE_MODE' in dir(settings) and settings.INVITE_MODE:
+        logging.getLogger("info_logger").info('Able to invite')
+        if key and is_key_valid(key):
+            template_name = 'invitation/invited.html'
+            logging.getLogger("info_logger").info("Valid key")
+        else:
+            template_name = 'invitation/wrong_invitation_key.html'
+        extra_context = extra_context is not None and extra_context.copy() or {}
+        extra_context.update({'invitation_key': key})
+        return None
+    else:
+        return HttpResponseRedirect(reverse('registration_register'))
 
 
 @login_required()
@@ -256,5 +292,21 @@ def invite_select_view(request):
                'title': title}
 
     return render(request, "invite_select_list.html", context=context)
+
+
+@login_required()
+def simple(request):
+    # just to test the delivery of  a safe string to the browser
+    template_name = 'invitation_complete.html'
+    mail_body = ('The person you invited is already a member on the site<br>'
+                 'Next time they log on, they will be able to join the group')
+
+    context = {
+        'title': 'Sent invite',
+        'mail_body': mail_body}
+
+    return render(request, template_name, context)
+
+
 
 

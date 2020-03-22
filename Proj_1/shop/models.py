@@ -52,7 +52,7 @@ class ShopGroupManager(models.Manager):
         return qs
 
     def create_group(self, name, manager):
-        new_group = self.create(name=name, manager=manager)
+        new_group = self.create(name=name, manager=manager, disabled = True)
         return new_group
 
     def member_of(self, user):
@@ -80,6 +80,9 @@ class ShopGroup(models.Model):
 
     def __str__(self):
         return self.name.title()
+
+    def activate(self):
+        self.disabled = False
 
     @property
     def info(self):

@@ -1,5 +1,23 @@
 Items still to action:
 ======================
+
+register not accessed when logged in!
+Update home page - not show goto list if not logged in but login
+implement register via email confirmation - now its possible to register without confirmation
+implement password reset via email
+what if the send fails? password reset?
+ensure views can't be reached by changing the url
+
+
+create documentation page / help
+document : merchant - who can edit ? anyone
+backup email solution
+offline email stack
+
+
+Items done:
+======================
+
 done - url for register
 done - base template with register link if the user is not logged in
 done - check that inviting an existing user does not send email
@@ -11,15 +29,17 @@ Done - group - existing user to add a new group
 done - Add group option to Menu
 done - shopgroup create ensure that user = memebr=leader=manager
 done - add logging account views
-
-document : merchant - who can edit ? anyone
-there must always be at least one leader/member - remove the group if the last one is deleted
-implement register via email confirmation - now its possible to register without confirmation
-
-
-
 Done - User register form to get first and last Name as mandatory
-ensure views can't be reached by changing the url
+done there must always be at least one leader/member - remove the group if the last one is deleted
+done dynamic creation of the domain address in email.py
+done - mode secret key to settings config
+
+
 
 Document
 ========
+proposed url to match to
+r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$'
+url patter for the invite
+r'^invited/(?P<key>[0-9a-zA-Z]{40})/$'
+'http://127.0.0.1:8000/invite/invited/' + key + '/'
