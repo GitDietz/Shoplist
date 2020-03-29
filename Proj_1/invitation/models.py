@@ -15,7 +15,7 @@ from django.utils.http import int_to_base36
 from hashlib import sha1 as sha_constructor
 from django.utils.translation import ugettext_lazy as _
 
-from shop.models import ShopGroup
+# from shop.models import ShopGroup
 
 
 class InvitationKeyManager(models.Manager):
@@ -59,10 +59,13 @@ class InvitationKey(models.Model):
     date_invited = models.DateField(_('date invited'), default=datetime.date.today)
     from_user = models.ForeignKey(User, related_name='invitations_sent', on_delete=models.CASCADE)
     registrant = models.ForeignKey(User, null=True, blank=True, related_name='invitations_used', on_delete=models.CASCADE)
-    invite_to_group = models.ForeignKey(ShopGroup, on_delete=models.CASCADE)
+    invite_to_group = models.ForeignKey('shop.ShopGroup', on_delete=models.CASCADE)
     invited_email = models.EmailField(null=False, blank=False)
     invite_used = models.BooleanField(null=False, default=False)
     objects = InvitationKeyManager()
+
+    class Meta:
+        app_label = 'invitation'
 
     def __unicode__(self):
         return u"Invitation from %s on %s" % (self.from_user.username, self.date_invited)

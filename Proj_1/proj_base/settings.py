@@ -43,17 +43,16 @@ INSTALLED_APPS = [
     'markdown_deux',
     'pagedown',
     # local apps
-    # 'comments',
+    'accounts',
     'shop',
     'invitation',
-    # 'work_posts'
 ]
 
 SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,14 +60,14 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 ]
 
 SILENCED_SYSTEM_CHECKS = [
-    'admin.E408','admin.E409','admin.E410',
+    'admin.E408', 'admin.E409', 'admin.E410',
 ]
 
-ROOT_URLCONF = 'Proj_1.urls'
+ROOT_URLCONF = 'Proj_1.proj_base.urls'
 
 TEMPLATES = [
     {
@@ -86,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Proj_1.wsgi.application'
+WSGI_APPLICATION = 'proj_base.wsgi.application'
 
 
 

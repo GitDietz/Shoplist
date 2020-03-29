@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2>{% "Accept invitation" %}</h2>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+
+<input type="submit" value="{% "Complete registration" %}" />
+</form>
+
+{% endblock %}

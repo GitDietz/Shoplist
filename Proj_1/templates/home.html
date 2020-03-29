@@ -13,8 +13,8 @@
         {% if user.is_authenticated %}
             <a class="btn btn-primary btn-lg" href="{% url 'shop:shop_list' %}" role="button">Go to your list</a>
         {% else %}
-            <a class="btn btn-primary btn-lg" href="{% url 'shop:shop_list' %}" role="button">Register</a>
-            <a class="btn btn-primary btn-lg" href="{% url 'shop:shop_list' %}" role="button">Sign in</a>
+            <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
+            <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Sign in</a>
         {% endif %}
     </p>
 </div>

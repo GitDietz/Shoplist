@@ -5,6 +5,8 @@
     <h2>{# "Invitation sent" #}</h2>
     <div>{{ mail_body | safe}}</div>
     <br>
+{% else %}
+    <p>Your invite was successfully sent! </p>
 {% endif %}
 <a href="{% url 'shop:shop_list' %}">Back to the List</a>
 {% endblock %}

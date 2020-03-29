@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from .models import InvitationKey
-from shop.models import ShopGroup
-# from django.contrib.auth import
+from Proj_1.shop.models import ShopGroup
 
 
 class InvitationKeyForm(forms.ModelForm):
@@ -48,3 +47,18 @@ class InvitationSelectForm(forms.ModelForm):
     #     super(InvitationSelectForm, self).__init__(*args, **kwargs)
     #     open_invites = InvitationKey.objects.filter(invite_used=False).filter(invited_email=user.email)
     #     self.fields['invite_to_group'].queryset = open_invites
+
+
+# class InvitationAcceptForm(forms.ModelForm):
+#     first_name = forms.CharField(label='Your first Name - other members will see this', required=True)
+#     last_name = forms.CharField(label='Your last Name', required=True)
+#     password = forms.PasswordInput()
+#
+#     class Meta:
+#         model = InvitationKey
+#         fields = ['first_name',
+#                   'last_name,'
+#                   'password']
+
+
+

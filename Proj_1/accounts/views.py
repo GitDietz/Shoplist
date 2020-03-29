@@ -114,8 +114,8 @@ def set_group(request):
     divert to select view if more
     """
     list_choices = ShopGroup.objects.filter(members=request.user)
-    if list_choices is None:
-        # if request.user.username == 'SuperAdmin':
+    if not list_choices:
+        # usually only when startup
         logging.getLogger("info_logger").info(f'rare case - no groups for user')
         return redirect('/')
     elif list_choices.count() > 1:
@@ -136,7 +136,7 @@ def register_view(request):
     """
     logging.getLogger("info_logger").info(f'Enter')
     next = request.GET.get('next')
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('/')
 
     if 'REGISTRATIONS' in dir(settings) and settings.REGISTRATIONS:

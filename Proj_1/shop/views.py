@@ -12,7 +12,7 @@ from .forms import ItemForm, MerchantForm, ShopGroupForm, UsersGroupsForm,NewGro
 import logging
 from .models import Item, Merchant, ShopGroup
 
-from Proj_1.utils import *
+from Proj_1.proj_base.utils import *
 from datetime import date
 
 
@@ -159,6 +159,9 @@ def shop_list(request):
     # get the active list for the user
     logging.getLogger("info_logger").info(f"view entry | user = {request.user.username}")
     list_choices = ShopGroup.objects.filter(members=request.user)
+    if not list_choices:
+        logging.getLogger("info_logger").info(f"user has no groups redirect to create?")
+        return redirect('shop:group_list')
     list_active_no = get_session_list_choice(request)
     if list_active_no is None:
         logging.getLogger("info_logger").info(f"redirect to group selection | user = {request.user.username}")
@@ -170,7 +173,7 @@ def shop_list(request):
     # leader status allows user to see the action buttons and to perform their actions
     leader_status = is_user_leader(request, list_active_no)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         queryset_list = Item.objects.to_get_by_group(list_active_no)
         notice = ''
         if request.POST: # and (request.user.is_staff or leader_status):
@@ -310,7 +313,7 @@ def user_group_select(request):
 
 #  ################################# GROUP #################################
 @login_required
-def group_detail_rb(request, pk=None, shopgroup_obj=None):
+def group_detail(request, pk=None, shopgroup_obj=None):
     logging.getLogger("info_logger").info(f'user = {request.user.username}| id = {pk}')
     if pk:
         shopgroup_obj = get_object_or_404(ShopGroup, pk=pk)
@@ -584,7 +587,7 @@ def merchant_delete(request, pk):
     return render(request, template_name, context)
 
 # ################################# Experimental USER #################################
-
+# 30/3/20 none used
 
 @login_required
 def search(request):

@@ -1,15 +1,8 @@
-from django.urls import path, re_path
+from django.conf.urls import include, url
 
-from .views import *
-
-app_name = 'invitation'
+from .views import invite, invited, complete, invite_select_view, simple, compile_confirmation, account_activation_sent, activate, invite_test
 
 urlpatterns = [
-    # path('invite/', invite, name='invitation_invite'),
-    re_path(r'test/$', simple, name='simple'),
-    ]
-
-# urlpatterns = [
     # url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/(?P<group>[0-9A-Za-z_\-]+)/$', activate, name='activate'),
     # url(r'^activation_sent/$', account_activation_sent, name='account_activation_sent'),
     # url(r'^complete/.*', complete, name='complete'),
@@ -20,4 +13,5 @@ urlpatterns = [
     # url(r'^invited/(?P<key>[0-9a-zA-Z]{40})/$', invited, name='invitation_invited'),
     # url(r'^select/$', invite_select_view, name='invite_select'),
     # url(r'^test/$', simple, name='simple'),
-    # ]
+    ]
+
