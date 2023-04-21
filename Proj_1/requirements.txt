@@ -6,4 +6,4 @@ django-pagedown==1.0.6
 markdown2==2.4.0
 Pillow==8.2.0
 pytz==2019.3
-sqlparse==0.3.0
+sqlparse==0.4.4
